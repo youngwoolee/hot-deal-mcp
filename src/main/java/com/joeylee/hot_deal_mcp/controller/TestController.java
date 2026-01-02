@@ -20,7 +20,9 @@ public class TestController {
     public List<HotDealService.DealInfo> getHotDeals(
             @RequestParam(required = false, defaultValue = "ALL") String category
     ) {
-        return hotDealService.fetchHotDeals(category);
+        // String을 Category로 변환 후 직접 호출 (캐시 작동을 위해)
+        HotDealService.Category cat = HotDealService.Category.fromString(category);
+        return hotDealService.fetchHotDeals(cat);
     }
 
     @GetMapping("/search")
@@ -28,7 +30,9 @@ public class TestController {
             @RequestParam String keyword,
             @RequestParam(required = false, defaultValue = "ALL") String category
     ) {
-        return hotDealService.fetchHotDeals(category).stream()
+        // String을 Category로 변환 후 직접 호출 (캐시 작동을 위해)
+        HotDealService.Category cat = HotDealService.Category.fromString(category);
+        return hotDealService.fetchHotDeals(cat).stream()
                 .filter(deal -> deal.getTitle().toLowerCase().contains(keyword.toLowerCase()))
                 .limit(10)
                 .toList();

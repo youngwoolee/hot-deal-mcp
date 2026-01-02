@@ -28,8 +28,9 @@ public class McpToolConfig {
             @McpToolParam(description = "검색할 상품명 키워드", required = true) String keyword,
             @McpToolParam(description = "카테고리 (ALL, IT, FOOD, BEAUTY, EVENT, GAME, ETC 중 선택, 기본값: ALL)", required = false) String category
     ) {
-        // 1. 알구몬에서 핫딜 데이터 가져오기 (카테고리별)
-        List<HotDealService.DealInfo> allDeals = hotDealService.fetchHotDeals(category);
+        // 1. 카테고리 변환 및 알구몬에서 핫딜 데이터 가져오기
+        HotDealService.Category cat = HotDealService.Category.fromString(category);
+        List<HotDealService.DealInfo> allDeals = hotDealService.fetchHotDeals(cat);
 
         // 2. 키워드 필터링
         List<HotDealService.DealInfo> filteredDeals = allDeals.stream()
@@ -42,7 +43,6 @@ public class McpToolConfig {
             return "현재 검색된 핫딜 정보가 없습니다. (키워드를 바꿔보세요!)";
         }
 
-        HotDealService.Category cat = HotDealService.Category.fromString(category);
         return formatToMarkdown(filteredDeals, "🔍 " + keyword + " 검색 결과 (" + cat.getDisplayName() + ")");
     }
 
@@ -53,13 +53,14 @@ public class McpToolConfig {
     public String getHotDealRanking(
             @McpToolParam(description = "카테고리 (ALL, IT, FOOD, BEAUTY, EVENT, GAME, ETC 중 선택, 기본값: ALL)", required = false) String category
     ) {
-        List<HotDealService.DealInfo> allDeals = hotDealService.fetchHotDeals(category);
+        // 카테고리 변환 및 핫딜 데이터 가져오기
+        HotDealService.Category cat = HotDealService.Category.fromString(category);
+        List<HotDealService.DealInfo> allDeals = hotDealService.fetchHotDeals(cat);
 
         if (allDeals.isEmpty()) {
             return "현재 조회 가능한 핫딜이 없습니다. 잠시 후 다시 시도해주세요.";
         }
 
-        HotDealService.Category cat = HotDealService.Category.fromString(category);
         return formatToMarkdown(allDeals, "🔥 실시간 핫딜 랭킹 - " + cat.getDisplayName());
     }
 
