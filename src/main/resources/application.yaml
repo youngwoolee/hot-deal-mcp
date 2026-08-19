@@ -15,6 +15,9 @@ spring:
 server:
   port: ${PORT:8080}
 
+app:
+  public-base-url: ${PUBLIC_BASE_URL:https://a77b-110-12-100-12.ngrok-free.app}
+
 management:
   endpoints:
     web:

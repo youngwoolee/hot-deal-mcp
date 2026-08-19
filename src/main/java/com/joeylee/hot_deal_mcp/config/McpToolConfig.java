@@ -1,10 +1,18 @@
 package com.joeylee.hot_deal_mcp.config;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import com.joeylee.hot_deal_mcp.service.HotDealService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.joeylee.hot_deal_mcp.service.CreditCardGuideService;
+import com.joeylee.hot_deal_mcp.widget.PlayMcpWidgetFactory;
+import com.joeylee.hot_deal_mcp.widget.PlayMcpWidgetResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springaicommunity.mcp.annotation.McpTool;
 import org.springaicommunity.mcp.annotation.McpToolParam;
 import org.springframework.context.annotation.Configuration;
@@ -12,129 +20,161 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @RequiredArgsConstructor
+@Slf4j
 public class McpToolConfig {
 
-    private final HotDealService hotDealService;
-
-    // 1. 입력 파라미터 (LLM이 채워줄 값)
-    public record HotDealRequest(String keyword) {}
-
-    // 2. 출력 결과 (Markdown 문자열로 리턴)
-    @McpTool(
-            name = "searchHotDeals",
-            description = "현재 진행 중인 핫딜 정보를 검색합니다. 'keyword'와 'category'를 입력하여 알구몬에서 관련 상품을 검색합니다. 카테고리: ALL(전체), IT(전자/IT), FOOD(식품/영양제), BEAUTY(뷰티/패션), EVENT(이벤트/상품권), GAME(게임/앱), ETC(기타)"
-        )
-    public String searchHotDeals(
-            @McpToolParam(description = "검색할 상품명 키워드", required = true) String keyword,
-            @McpToolParam(description = "카테고리 (ALL, IT, FOOD, BEAUTY, EVENT, GAME, ETC 중 선택, 기본값: ALL)", required = false) String category
-    ) {
-        // 1. 카테고리 변환 및 알구몬에서 핫딜 데이터 가져오기
-        HotDealService.Category cat = HotDealService.Category.fromString(category);
-        List<HotDealService.DealInfo> allDeals = hotDealService.fetchHotDeals(cat);
-
-        // 2. 키워드 필터링
-        List<HotDealService.DealInfo> filteredDeals = allDeals.stream()
-                .filter(d -> isMatch(d.getTitle(), keyword))
-                .limit(20)
-                .toList();
-
-        // 3. 결과 포맷팅 (Markdown)
-        if (filteredDeals.isEmpty()) {
-            return "현재 검색된 핫딜 정보가 없습니다. (키워드를 바꿔보세요!)";
-        }
-
-        return formatToMarkdown(filteredDeals, "🔍 " + keyword + " 검색 결과 (" + cat.getDisplayName() + ")");
-    }
+    private final CreditCardGuideService creditCardGuideService;
+    private final PlayMcpWidgetFactory widgetFactory;
+    private final ObjectMapper objectMapper;
 
     @McpTool(
-            name = "getHotDealRanking",
-            description = "현재 실시간 핫딜 랭킹을 조회합니다. 카테고리별로 조회 가능합니다. 카테고리: ALL(전체), IT(전자/IT), FOOD(식품/영양제), BEAUTY(뷰티/패션), EVENT(이벤트/상품권), GAME(게임/앱), ETC(기타)"
+            name = "getCreditCardRecommendations",
+            description = "사용자가 신용카드 추천, 카드 비교, 업종별 할인 카드 또는 혜택 카드를 요청할 때 호출합니다. "
+                    + "사용자 발화에서 주요 소비 업종과 선호 연회비를 추출하여 조건에 맞는 카드 혜택 유형을 안내합니다. "
+                    + "예를 들어 '3만원대 교육 할인되는 카드 추천해줘'라는 요청은 업종을 교육, 연회비를 2~3만원대로 설정합니다. "
+                    + "업종은 온라인 쇼핑, 마트, 편의점, 음식점/카페, 배달, 통신/공과금, 자동차/주유, 교통, 패션/뷰티, 교육, 해외 중 하나입니다. "
+                    + "연회비는 0~1만원대, 2~3만원대, 제한없음 중 하나입니다. 무료, 1만원 이하, 1만원대는 0~1만원대로, "
+                    + "2만원대, 3만원대, 3만원 이하는 2~3만원대로 변환합니다. 연회비를 말하지 않거나 상관없다고 하면 제한없음을 사용합니다.",
+            annotations = @McpTool.McpAnnotations(
+                    title = "소비 업종별 카드 안내",
+                    readOnlyHint = true,
+                    destructiveHint = false,
+                    idempotentHint = true,
+                    openWorldHint = false
+            )
     )
-    public String getHotDealRanking(
-            @McpToolParam(description = "카테고리 (ALL, IT, FOOD, BEAUTY, EVENT, GAME, ETC 중 선택, 기본값: ALL)", required = false) String category
+    public PlayMcpWidgetResponse getCreditCardRecommendations(
+            @McpToolParam(
+                    description = "사용자가 할인이나 혜택을 원하는 업종. '교육 할인'은 교육으로 추출합니다. 허용값: 온라인 쇼핑, 마트, 편의점, 음식점/카페, 배달, 통신/공과금, 자동차/주유, 교통, 패션/뷰티, 교육, 해외",
+                    required = true
+            )
+            String industry,
+            @McpToolParam(
+                    description = "사용자가 원하는 연회비 구간. '3만원대'는 2~3만원대로 변환합니다. 허용값: 0~1만원대, 2~3만원대, 제한없음. 언급이 없거나 상관없으면 제한없음",
+                    required = false
+            )
+            String annualFee
     ) {
-        // 카테고리 변환 및 핫딜 데이터 가져오기
-        HotDealService.Category cat = HotDealService.Category.fromString(category);
-        List<HotDealService.DealInfo> allDeals = hotDealService.fetchHotDeals(cat);
+        logToolParameters(
+                "getCreditCardRecommendations",
+                "industry", industry,
+                "annualFee", annualFee
+        );
 
-        if (allDeals.isEmpty()) {
-            return "현재 조회 가능한 핫딜이 없습니다. 잠시 후 다시 시도해주세요.";
-        }
-
-        return formatToMarkdown(allDeals, "🔥 실시간 핫딜 랭킹 - " + cat.getDisplayName());
+        return recommendCreditCards(
+                "getCreditCardRecommendations",
+                industry,
+                annualFee,
+                widgetFactory.clarificationNeeded(industryClarificationText()),
+                widgetFactory.clarificationNeeded(annualFeeClarificationText())
+        );
     }
 
-    /**
-     * 공통 로직: Markdown 변환 (중복 제거)
-     */
-    private String formatToMarkdown(List<HotDealService.DealInfo> deals, String titleHeader) {
-        if (deals.isEmpty()) {
-            return "검색된 핫딜 정보가 없습니다.";
-        }
+    @McpTool(
+            name = "getCreditCardRecommendationsWithSelector",
+            description = "사용자가 신용카드 추천, 카드 비교, 업종별 할인 카드 또는 혜택 카드를 요청할 때 호출합니다. "
+                    + "getCreditCardRecommendations와 동일하게 소비 업종과 선호 연회비를 추출해 카드 혜택 유형을 안내하되, "
+                    + "업종 또는 연회비가 불명확해 값을 채울 수 없는 경우 안내 텍스트 대신 선택 가능한 버튼 위젯을 내려줍니다. "
+                    + "업종은 온라인 쇼핑, 마트, 편의점, 음식점/카페, 배달, 통신/공과금, 자동차/주유, 교통, 패션/뷰티, 교육, 해외 중 하나입니다. "
+                    + "연회비는 0~1만원대, 2~3만원대, 제한없음 중 하나입니다. 연회비를 말하지 않거나 상관없다고 하면 제한없음을 사용합니다.",
+            annotations = @McpTool.McpAnnotations(
+                    title = "소비 업종별 카드 안내 (선택 위젯)",
+                    readOnlyHint = true,
+                    destructiveHint = false,
+                    idempotentHint = true,
+                    openWorldHint = false
+            )
+    )
+    public PlayMcpWidgetResponse getCreditCardRecommendationsWithSelector(
+            @McpToolParam(
+                    description = "사용자가 할인이나 혜택을 원하는 업종. '교육 할인'은 교육으로 추출합니다. 허용값: 온라인 쇼핑, 마트, 편의점, 음식점/카페, 배달, 통신/공과금, 자동차/주유, 교통, 패션/뷰티, 교육, 해외",
+                    required = true
+            )
+            String industry,
+            @McpToolParam(
+                    description = "사용자가 원하는 연회비 구간. '3만원대'는 2~3만원대로 변환합니다. 허용값: 0~1만원대, 2~3만원대, 제한없음. 언급이 없거나 상관없으면 제한없음",
+                    required = false
+            )
+            String annualFee
+    ) {
+        logToolParameters(
+                "getCreditCardRecommendationsWithSelector",
+                "industry", industry,
+                "annualFee", annualFee
+        );
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("### ").append(titleHeader).append("\n\n");
-        sb.append("| 쇼핑몰 | 상품명 | 가격 | 링크 |\n");
-        sb.append("| :---: | :--- | :---: | :---: |\n");
-
-        for (HotDealService.DealInfo d : deals) {
-            sb.append(String.format("| %s | %s | **%s** | [보기](%s) |\n",
-                                    d.getMall(), d.getTitle(), d.getPrice(), d.getLink()));
-        }
-        sb.append(String.format("\n_총 %d개 핫딜 • 데이터 출처: [알구몬](https://www.algumon.com)_", deals.size()));
-        return sb.toString();
+        return recommendCreditCards(
+                "getCreditCardRecommendationsWithSelector",
+                industry,
+                annualFee,
+                widgetFactory.industrySelector(),
+                widgetFactory.annualFeeSelector()
+        );
     }
 
-    private boolean isMatch(String title, String keyword) {
-        if (keyword == null || keyword.isBlank()) return true;
-
-        String cleanTitle = title.toLowerCase().replace(" ", "");
-        String cleanKeyword = keyword.toLowerCase().replace(" ", "");
-
-        // 1. 단순 포함 여부 (띄어쓰기 무시)
-        if (cleanTitle.contains(cleanKeyword)) {
-            return true;
+    private PlayMcpWidgetResponse recommendCreditCards(
+            String toolName,
+            String industry,
+            String annualFee,
+            PlayMcpWidgetResponse industryClarification,
+            PlayMcpWidgetResponse annualFeeClarification
+    ) {
+        CreditCardGuideService.Industry parsedIndustry;
+        try {
+            parsedIndustry = CreditCardGuideService.Industry.fromString(industry);
+        } catch (IllegalArgumentException exception) {
+            return logAndReturn(toolName, industryClarification);
         }
 
-        // 2. 오타 허용 (Fuzzy Search)
-        // 제목을 단어별로 쪼개서 키워드와 비슷한 단어가 있는지 확인
-        // 예: 제목의 "체다치즈" vs 키워드 "체즈치즈"
-        String[] titleWords = title.split(" ");
-        for (String word : titleWords) {
-            // 단어와 키워드의 '편집 거리' 계산
-            int distance = calculateLevenshteinDistance(word, keyword);
-
-            // 글자 수에 따라 허용 오차 범위 설정 (짧은 단어는 1글자, 긴 단어는 2글자까지)
-            int threshold = (keyword.length() <= 3) ? 1 : 2;
-
-            if (distance <= threshold) {
-                return true; // 유사한 단어 발견!
-            }
+        CreditCardGuideService.AnnualFeeBand parsedAnnualFee;
+        try {
+            parsedAnnualFee = CreditCardGuideService.AnnualFeeBand.fromString(annualFee);
+        } catch (IllegalArgumentException exception) {
+            return logAndReturn(toolName, annualFeeClarification);
         }
 
-        return false;
+        List<CreditCardGuideService.CardGuide> guides =
+                creditCardGuideService.findGuides(parsedIndustry, parsedAnnualFee);
+        PlayMcpWidgetResponse response =
+                widgetFactory.creditCardGuideList(guides, parsedIndustry, parsedAnnualFee);
+        return logAndReturn(toolName, response);
     }
 
-    /**
-     * 레벤슈타인 거리 계산 알고리즘 (두 문자열이 얼마나 다른지 계산)
-     * 0이면 완전 일치, 숫자가 클수록 많이 다름.
-     */
-    private int calculateLevenshteinDistance(String s1, String s2) {
-        int[][] dp = new int[s1.length() + 1][s2.length() + 1];
-
-        for (int i = 0; i <= s1.length(); i++) dp[i][0] = i;
-        for (int j = 0; j <= s2.length(); j++) dp[0][j] = j;
-
-        for (int i = 1; i <= s1.length(); i++) {
-            for (int j = 1; j <= s2.length(); j++) {
-                int cost = (s1.charAt(i - 1) == s2.charAt(j - 1)) ? 0 : 1;
-                dp[i][j] = Math.min(
-                        Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1),
-                        dp[i - 1][j - 1] + cost
-                );
-            }
-        }
-        return dp[s1.length()][s2.length()];
+    private static String industryClarificationText() {
+        String options = Arrays.stream(CreditCardGuideService.Industry.values())
+                .map(CreditCardGuideService.Industry::getDisplayName)
+                .collect(Collectors.joining(", "));
+        return "어떤 업종의 카드 혜택을 원하시는지 다시 말씀해 주세요.\n\n**선택 가능한 업종**: " + options;
     }
 
+    private static String annualFeeClarificationText() {
+        String options = Arrays.stream(CreditCardGuideService.AnnualFeeBand.values())
+                .map(CreditCardGuideService.AnnualFeeBand::getDisplayName)
+                .collect(Collectors.joining(", "));
+        return "원하시는 연회비 구간을 다시 말씀해 주세요.\n\n**선택 가능한 구간**: " + options;
+    }
+
+    private void logToolParameters(String toolName, Object... keyValues) {
+        Map<String, Object> parameters = new LinkedHashMap<>();
+        for (int index = 0; index < keyValues.length; index += 2) {
+            parameters.put((String) keyValues[index], keyValues[index + 1]);
+        }
+        logJson("MCP 툴 파라미터", toolName, parameters);
+    }
+
+    private PlayMcpWidgetResponse logAndReturn(
+            String toolName,
+            PlayMcpWidgetResponse response
+    ) {
+        logJson("MCP 툴 JSON 응답", toolName, response);
+        return response;
+    }
+
+    private void logJson(String message, String toolName, Object value) {
+        try {
+            log.info("{} - tool={}, json={}", message, toolName, objectMapper.writeValueAsString(value));
+        } catch (JsonProcessingException exception) {
+            log.warn("{} 직렬화 실패 - tool={}, error={}", message, toolName, exception.getMessage());
+        }
+    }
 }
