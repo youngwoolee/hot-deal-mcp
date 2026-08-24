@@ -14,22 +14,41 @@ import org.springframework.stereotype.Service;
 public class CreditCardGuideService {
 
     public enum Industry {
-        ONLINE_SHOPPING("온라인 쇼핑"),
-        MART("마트"),
-        CONVENIENCE_STORE("편의점"),
-        RESTAURANT_CAFE("음식점/카페"),
-        DELIVERY("배달"),
-        TELECOM_UTILITIES("통신/공과금"),
-        AUTO_FUEL("자동차/주유"),
-        TRANSPORTATION("교통"),
-        FASHION_BEAUTY("패션/뷰티"),
-        EDUCATION("교육"),
-        OVERSEAS("해외");
+        ANYWHERE(1, "어디서나"),
+        FUEL(2, "주유"),
+        LARGE_MART(3, "대형마트"),
+        CONVENIENCE_STORE(4, "편의점"),
+        SHOPPING(5, "쇼핑"),
+        MOVIE_PERFORMANCE(6, "영화/공연"),
+        DINING_DELIVERY(7, "외식/배달"),
+        CAFE(8, "카페"),
+        PUBLIC_TRANSPORT(9, "대중교통"),
+        HOSPITAL_PHARMACY(10, "병원/약국"),
+        UTILITIES(11, "공과금"),
+        TELECOM(12, "통신"),
+        EDUCATION_CHILDCARE(13, "교육/육아"),
+        LEISURE(14, "레저"),
+        AIRLINE(15, "항공"),
+        AIRPORT(16, "공항"),
+        BEAUTY(17, "뷰티"),
+        SIMPLE_PAYMENT(18, "간편결제"),
+        SUBSCRIPTION(19, "구독"),
+        TRAVEL_STAY(20, "여행/숙박"),
+        FINANCE(21, "금융"),
+        DISCOUNT(22, "할인"),
+        POINTS(23, "적립"),
+        YOUTH(24, "청소년");
 
+        private final int code;
         private final String displayName;
 
-        Industry(String displayName) {
+        Industry(int code, String displayName) {
+            this.code = code;
             this.displayName = displayName;
+        }
+
+        public int getCode() {
+            return code;
         }
 
         public String getDisplayName() {
@@ -41,14 +60,32 @@ public class CreditCardGuideService {
                 throw new IllegalArgumentException("업종을 입력해주세요.");
             }
 
-            String normalized = value.trim().toLowerCase(Locale.ROOT).replace(" ", "");
+            String normalized = value.trim();
+
+            try {
+                int code = Integer.parseInt(normalized);
+                return fromCode(code);
+            } catch (NumberFormatException notANumber) {
+                // 숫자가 아니면 업종명으로 매칭을 시도한다.
+            }
+
+            String normalizedName = normalized.toLowerCase(Locale.ROOT).replace(" ", "");
             return Arrays.stream(values())
                     .filter(industry -> industry.displayName.toLowerCase(Locale.ROOT)
                             .replace(" ", "")
-                            .equals(normalized))
+                            .equals(normalizedName))
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException(
                             "지원하지 않는 업종입니다: " + value
+                    ));
+        }
+
+        public static Industry fromCode(int code) {
+            return Arrays.stream(values())
+                    .filter(industry -> industry.code == code)
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "지원하지 않는 업종 코드입니다: " + code
                     ));
         }
     }

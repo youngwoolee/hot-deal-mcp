@@ -48,9 +48,10 @@ public class PlayMcpWidgetFactory {
                 "type", "Text",
                 "value", "어떤 업종의 카드 혜택을 원하시나요?"
         ));
-        children.addAll(Arrays.stream(CreditCardGuideService.Industry.values())
-                .map(industry -> selectorButton(industry.getDisplayName()))
-                .toList());
+        children.addAll(selectorButtonRows(Arrays.stream(CreditCardGuideService.Industry.values())
+                .map(CreditCardGuideService.Industry::getDisplayName)
+                .toList()));
+        // 버튼 클릭 시 라벨 텍스트가 재발화로 전달되므로 업종명을 그대로 라벨로 사용한다.
 
         Map<String, Object> widget = new LinkedHashMap<>();
         widget.put("type", "Card");
@@ -65,15 +66,28 @@ public class PlayMcpWidgetFactory {
                 "type", "Text",
                 "value", "원하시는 연회비 구간을 선택해주세요"
         ));
-        children.addAll(Arrays.stream(CreditCardGuideService.AnnualFeeBand.values())
-                .map(band -> selectorButton(band.getDisplayName()))
-                .toList());
+        children.addAll(selectorButtonRows(Arrays.stream(CreditCardGuideService.AnnualFeeBand.values())
+                .map(CreditCardGuideService.AnnualFeeBand::getDisplayName)
+                .toList()));
 
         Map<String, Object> widget = new LinkedHashMap<>();
         widget.put("type", "Card");
         widget.put("children", children);
 
         return new PlayMcpWidgetResponse(widget, "원하시는 연회비 구간을 선택해 주세요.");
+    }
+
+    private List<Map<String, Object>> selectorButtonRows(List<String> labels) {
+        List<Map<String, Object>> rows = new java.util.ArrayList<>();
+        for (int index = 0; index < labels.size(); index += 2) {
+            List<String> rowLabels = labels.subList(index, Math.min(index + 2, labels.size()));
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("type", "Row");
+            row.put("gap", 2);
+            row.put("children", rowLabels.stream().map(this::selectorButton).toList());
+            rows.add(row);
+        }
+        return rows;
     }
 
     public PlayMcpWidgetResponse creditCardGuideList(
@@ -175,6 +189,7 @@ public class PlayMcpWidgetFactory {
         Map<String, Object> button = new LinkedHashMap<>();
         button.put("type", "Button");
         button.put("label", label);
+        button.put("flex", 1);
         return button;
     }
 
