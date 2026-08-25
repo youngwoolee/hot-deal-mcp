@@ -78,16 +78,7 @@ public class PlayMcpWidgetFactory {
     }
 
     private List<Map<String, Object>> selectorButtonRows(List<String> labels) {
-        List<Map<String, Object>> rows = new java.util.ArrayList<>();
-        for (int index = 0; index < labels.size(); index += 2) {
-            List<String> rowLabels = labels.subList(index, Math.min(index + 2, labels.size()));
-            Map<String, Object> row = new LinkedHashMap<>();
-            row.put("type", "Row");
-            row.put("gap", 2);
-            row.put("children", rowLabels.stream().map(this::selectorButton).toList());
-            rows.add(row);
-        }
-        return rows;
+        return labels.stream().map(this::selectorButton).toList();
     }
 
     public PlayMcpWidgetResponse creditCardGuideList(
@@ -189,8 +180,19 @@ public class PlayMcpWidgetFactory {
         Map<String, Object> button = new LinkedHashMap<>();
         button.put("type", "Button");
         button.put("label", label);
-        button.put("flex", 1);
+        button.put("onClickAction", sendUserMessageAction(label));
         return button;
+    }
+
+    private Map<String, Object> sendUserMessageAction(String text) {
+        Map<String, Object> action = new LinkedHashMap<>();
+        action.put("payload", Map.of(
+                "target", Map.of(
+                        "type", "sendUserMessage",
+                        "properties", Map.of("text", text)
+                )
+        ));
+        return action;
     }
 
     private Map<String, Object> openUrlAction(String url) {

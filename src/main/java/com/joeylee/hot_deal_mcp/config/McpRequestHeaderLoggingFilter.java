@@ -50,33 +50,9 @@ public class McpRequestHeaderLoggingFilter extends OncePerRequestFilter {
         Map<String, String> headers = new LinkedHashMap<>();
         Collections.list(request.getHeaderNames()).forEach(name -> {
             String value = String.join(", ", Collections.list(request.getHeaders(name)));
-            headers.put(name, isSensitive(name) ? mask(value) : sanitize(value));
+            headers.put(name, value);
         });
         return headers;
     }
 
-    private boolean isSensitive(String headerName) {
-        String normalized = headerName.toLowerCase(Locale.ROOT);
-        return normalized.contains("authorization")
-                || normalized.contains("cookie")
-                || normalized.contains("token")
-                || normalized.contains("secret")
-                || normalized.contains("api-key")
-                || normalized.contains("apikey");
-    }
-
-    private String mask(String value) {
-        String sanitized = sanitize(value);
-        if (sanitized.length() <= 4) {
-            return "****";
-        }
-        return sanitized.substring(0, 2) + "***" + sanitized.substring(sanitized.length() - 2);
-    }
-
-    private String sanitize(String value) {
-        String sanitized = value.replace('\r', '_').replace('\n', '_');
-        return sanitized.length() <= MAX_LOG_VALUE_LENGTH
-                ? sanitized
-                : sanitized.substring(0, MAX_LOG_VALUE_LENGTH) + "...";
-    }
 }
