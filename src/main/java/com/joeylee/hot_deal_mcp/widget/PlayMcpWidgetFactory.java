@@ -78,7 +78,22 @@ public class PlayMcpWidgetFactory {
     }
 
     private List<Map<String, Object>> selectorButtonRows(List<String> labels) {
-        return labels.stream().map(this::selectorButton).toList();
+        List<Map<String, Object>> rows = new java.util.ArrayList<>();
+        for (int index = 0; index < labels.size(); index += 2) {
+            List<Map<String, Object>> buttons = labels.subList(
+                            index,
+                            Math.min(index + 2, labels.size())
+                    ).stream()
+                    .map(this::selectorButton)
+                    .toList();
+
+            rows.add(Map.of(
+                    "type", "Row",
+                    "gap", 2,
+                    "children", buttons
+            ));
+        }
+        return rows;
     }
 
     public PlayMcpWidgetResponse creditCardGuideList(
@@ -105,6 +120,45 @@ public class PlayMcpWidgetFactory {
         copyText.append("\n_실제 카드 상품 데이터 연동 전 혜택 유형 안내입니다._");
 
         return new PlayMcpWidgetResponse(widget, copyText.toString());
+    }
+
+    public PlayMcpWidgetResponse creditCardDetail(CreditCardGuideService.CardDetail detail) {
+        Map<String, Object> widget = new LinkedHashMap<>();
+        widget.put("type", "Card");
+        widget.put("children", List.of(
+                Map.of(
+                        "type", "Text",
+                        "value", detail.name(),
+                        "weight", "semibold"
+                ),
+                Map.of(
+                        "type", "Caption",
+                        "value", detail.issuer(),
+                        "color", "secondary"
+                ),
+                Map.of(
+                        "type", "Text",
+                        "value", detail.summary(),
+                        "color", "secondary"
+                )
+        ));
+
+        String copyText = "### " + detail.name()
+                + "\n\n- 카드사: **" + detail.issuer() + "**"
+                + "\n- 안내: " + detail.summary();
+        return new PlayMcpWidgetResponse(widget, copyText);
+    }
+
+    public PlayMcpWidgetResponse cardNameClarification() {
+        String message = "조회할 신한카드 상품명을 정확히 말씀해 주세요.";
+        Map<String, Object> widget = Map.of(
+                "type", "Card",
+                "children", List.of(Map.of(
+                        "type", "Text",
+                        "value", message
+                ))
+        );
+        return new PlayMcpWidgetResponse(widget, message);
     }
 
     private Map<String, Object> toCreditCardListViewItem(CreditCardGuideService.CardGuide guide) {

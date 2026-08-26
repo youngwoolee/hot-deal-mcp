@@ -2,7 +2,6 @@ package com.joeylee.hot_deal_mcp.service;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import org.springframework.stereotype.Service;
 
@@ -53,31 +52,6 @@ public class CreditCardGuideService {
 
         public String getDisplayName() {
             return displayName;
-        }
-
-        public static Industry fromString(String value) {
-            if (value == null || value.isBlank()) {
-                throw new IllegalArgumentException("업종을 입력해주세요.");
-            }
-
-            String normalized = value.trim();
-
-            try {
-                int code = Integer.parseInt(normalized);
-                return fromCode(code);
-            } catch (NumberFormatException notANumber) {
-                // 숫자가 아니면 업종명으로 매칭을 시도한다.
-            }
-
-            String normalizedName = normalized.toLowerCase(Locale.ROOT).replace(" ", "");
-            return Arrays.stream(values())
-                    .filter(industry -> industry.displayName.toLowerCase(Locale.ROOT)
-                            .replace(" ", "")
-                            .equals(normalizedName))
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException(
-                            "지원하지 않는 업종입니다: " + value
-                    ));
         }
 
         public static Industry fromCode(int code) {
@@ -135,7 +109,14 @@ public class CreditCardGuideService {
             String notice
     ) {}
 
-    public List<CardGuide> findGuides(Industry industry, AnnualFeeBand annualFeeBand) {
+    public record CardDetail(
+            String issuer,
+            String name,
+            String summary
+    ) {}
+
+    public List<CardGuide> findGuides(int industryCode, AnnualFeeBand annualFeeBand) {
+        Industry industry = Industry.fromCode(industryCode);
         if (annualFeeBand == AnnualFeeBand.NO_LIMIT) {
             return List.of(
                     guide(industry, AnnualFeeBand.TEN_THOUSAND_RANGE, "실속형"),
@@ -147,6 +128,15 @@ public class CreditCardGuideService {
                 guide(industry, annualFeeBand, "실속형"),
                 guide(industry, annualFeeBand, "균형형"),
                 guide(industry, annualFeeBand, "집중형")
+        );
+    }
+
+    public CardDetail findCardDetail(String cardName) {
+        CreditCardName matchedCard = CreditCardName.fromDisplayName(cardName);
+        return new CardDetail(
+                "신한카드",
+                matchedCard.getDisplayName(),
+                "카드 상세 데이터 연동 필요"
         );
     }
 

@@ -23,6 +23,10 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 public class McpToolConfig {
 
+    private static final String TOOL_NAME = "getCreditCardRecommendationsWithSelector";
+    private static final String TOOL_ERROR_MESSAGE = "### 카드 정보를 불러오지 못했습니다.\n\n"
+            + "잠시 후 다시 시도해 주세요.";
+
     private final CreditCardGuideService creditCardGuideService;
     private final PlayMcpWidgetFactory widgetFactory;
     private final ObjectMapper objectMapper;
@@ -71,16 +75,12 @@ public class McpToolConfig {
 //    }
 
     @McpTool(
-            name = "getCreditCardRecommendationsWithSelector",
-            description = "사용자가 신용카드 추천, 카드 비교, 업종별 할인 카드 또는 혜택 카드를 요청할 때 호출합니다. "
-                    + "getCreditCardRecommendations와 동일하게 소비 업종과 선호 연회비를 추출해 카드 혜택 유형을 안내하되, "
-                    + "업종 또는 연회비가 불명확해 값을 채울 수 없는 경우 안내 텍스트 대신 선택 가능한 버튼 위젯을 내려줍니다. "
-                    + "업종은 아래 번호 중 사용자 발화와 가장 가까운 것을 골라 해당 번호(숫자)로 전달합니다: "
-                    + "1 어디서나, 2 주유, 3 대형마트, 4 편의점, 5 쇼핑, 6 영화/공연, 7 외식/배달, 8 카페, "
-                    + "9 대중교통, 10 병원/약국, 11 공과금, 12 통신, 13 교육/육아, 14 레저, 15 항공, 16 공항, "
-                    + "17 뷰티, 18 간편결제, 19 구독, 20 여행/숙박, 21 금융, 22 할인, 23 적립, 24 청소년. "
-                    + "예를 들어 '주유 할인되는 카드 추천해줘'는 2, '교육비 할인'은 13, '아무데서나 쓰는 카드'는 1로 전달합니다. "
-                    + "연회비는 0~1만원대, 2~3만원대, 제한없음 중 하나입니다. 연회비를 말하지 않거나 상관없다고 하면 제한없음을 사용합니다.",
+            name = TOOL_NAME,
+            description = "Recommends Shinhan Card(신한카드) credit card benefit types based on the user's "
+                    + "preferred spending category and annual-fee range. Use for credit card recommendations, "
+                    + "comparisons, or category-specific benefits. Pass the closest supported category code as "
+                    + "industry; omit it when unclear to show a selector widget. Set annualFee to 0~1만원대, "
+                    + "2~3만원대, or 제한없음; use 제한없음 when the user does not specify a range.",
             annotations = @McpTool.McpAnnotations(
                     title = "소비 업종별 카드 안내 (선택 위젯)",
                     readOnlyHint = true,
@@ -97,38 +97,54 @@ public class McpToolConfig {
                             + "17 뷰티, 18 간편결제, 19 구독, 20 여행/숙박, 21 금융, 22 할인, 23 적립, 24 청소년",
                     required = false
             )
-            String industry,
+            Integer industry,
             @McpToolParam(
                     description = "사용자가 원하는 연회비 구간. '3만원대'는 2~3만원대로 변환합니다. 허용값: 0~1만원대, 2~3만원대, 제한없음. 언급이 없거나 상관없으면 제한없음",
                     required = false
             )
             String annualFee
     ) {
-        logToolParameters(
-                "getCreditCardRecommendationsWithSelector",
-                "industry", industry,
-                "annualFee", annualFee
-        );
+        try {
+            logToolParameters(
+                    TOOL_NAME,
+                    "industry", industry,
+                    "annualFee", annualFee
+            );
 
-        return recommendCreditCards(
-                "getCreditCardRecommendationsWithSelector",
-                industry,
-                annualFee,
-                widgetFactory.industrySelector(),
-                widgetFactory.annualFeeSelector()
-        );
+            return recommendCreditCards(
+                    TOOL_NAME,
+                    industry,
+                    annualFee,
+                    widgetFactory.industrySelector(),
+                    widgetFactory.annualFeeSelector()
+            );
+        } catch (RuntimeException exception) {
+            log.error(
+                    "MCP 툴 처리 실패 - tool={}, industry={}, annualFee={}",
+                    TOOL_NAME,
+                    industry,
+                    annualFee,
+                    exception
+            );
+            // The MCP annotation adapter converts this message into isError=true text content.
+            // Do not attach the original cause because the adapter exposes the deepest cause message.
+            throw new IllegalStateException(TOOL_ERROR_MESSAGE);
+        }
     }
 
     private PlayMcpWidgetResponse recommendCreditCards(
             String toolName,
-            String industry,
+            Integer industry,
             String annualFee,
             PlayMcpWidgetResponse industryClarification,
             PlayMcpWidgetResponse annualFeeClarification
     ) {
         CreditCardGuideService.Industry parsedIndustry;
         try {
-            parsedIndustry = CreditCardGuideService.Industry.fromString(industry);
+            if (industry == null) {
+                throw new IllegalArgumentException("업종 코드를 입력해주세요.");
+            }
+            parsedIndustry = CreditCardGuideService.Industry.fromCode(industry);
         } catch (IllegalArgumentException exception) {
             return logAndReturn(toolName, industryClarification);
         }
@@ -141,7 +157,7 @@ public class McpToolConfig {
         }
 
         List<CreditCardGuideService.CardGuide> guides =
-                creditCardGuideService.findGuides(parsedIndustry, parsedAnnualFee);
+                creditCardGuideService.findGuides(parsedIndustry.getCode(), parsedAnnualFee);
         PlayMcpWidgetResponse response =
                 widgetFactory.creditCardGuideList(guides, parsedIndustry, parsedAnnualFee);
         return logAndReturn(toolName, response);

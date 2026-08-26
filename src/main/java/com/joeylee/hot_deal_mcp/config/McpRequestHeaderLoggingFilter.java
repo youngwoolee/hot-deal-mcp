@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,6 +24,16 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class McpRequestHeaderLoggingFilter extends OncePerRequestFilter {
 
     private static final int MAX_LOG_VALUE_LENGTH = 200;
+    private static final Set<String> SENSITIVE_HEADERS = Set.of(
+            "authorization",
+            "proxy-authorization",
+            "cookie",
+            "set-cookie",
+            "x-api-key",
+            "api-key",
+            "infer-auth-key",
+            "client-secret"
+    );
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
@@ -50,9 +61,26 @@ public class McpRequestHeaderLoggingFilter extends OncePerRequestFilter {
         Map<String, String> headers = new LinkedHashMap<>();
         Collections.list(request.getHeaderNames()).forEach(name -> {
             String value = String.join(", ", Collections.list(request.getHeaders(name)));
-            headers.put(name, value);
+            headers.put(name, sanitizeHeaderValue(name, value));
         });
         return headers;
+    }
+
+    private String sanitizeHeaderValue(String name, String value) {
+        if (SENSITIVE_HEADERS.contains(name.toLowerCase(Locale.ROOT))) {
+            return mask(value);
+        }
+        if (value.length() <= MAX_LOG_VALUE_LENGTH) {
+            return value;
+        }
+        return value.substring(0, MAX_LOG_VALUE_LENGTH) + "...";
+    }
+
+    private String mask(String value) {
+        if (value.length() <= 4) {
+            return "***";
+        }
+        return value.substring(0, 2) + "***" + value.substring(value.length() - 2);
     }
 
 }
