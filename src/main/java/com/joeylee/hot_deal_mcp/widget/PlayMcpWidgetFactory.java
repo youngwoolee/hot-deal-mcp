@@ -22,6 +22,8 @@ public class PlayMcpWidgetFactory {
     private static final int MAX_WIDGET_ITEMS = 100;
     private static final int MAX_COPY_TEXT_ITEMS = 10;
     private static final String HOT_DEAL_RANK_URL = "https://www.algumon.com/deal/rank";
+    private static final String MORE_CARDS_URL =
+            "https://www.shinhancard.com/mob/MOBFM039N/MOBFM039C01.shc?crustMenuId=ms467";
 
     public PlayMcpWidgetResponse clarificationNeeded(String message) {
         return new PlayMcpWidgetResponse(null, message);
@@ -82,14 +84,30 @@ public class PlayMcpWidgetFactory {
             Industry industry,
             AnnualFeeBand annualFeeBand
     ) {
-        List<Map<String, Object>> children = guides.stream()
-                .map(this::toCreditCardListViewItem)
+        List<Map<String, Object>> cardRows = guides.stream()
+                .map(this::toCreditCardListRow)
                 .toList();
 
+        Map<String, Object> moreCardsButton = new LinkedHashMap<>();
+        moreCardsButton.put("type", "Button");
+        moreCardsButton.put("label", "더 많은 카드 보기");
+        moreCardsButton.put("variant", "outline");
+        moreCardsButton.put("pill", true);
+        moreCardsButton.put("block", true);
+        moreCardsButton.put("onClickAction", openUrlAction(MORE_CARDS_URL));
+
+        Map<String, Object> cardList = new LinkedHashMap<>();
+        cardList.put("type", "Col");
+        cardList.put("gap", 4);
+        cardList.put("padding", Map.of(
+                "x", 2,
+                "y", 3
+        ));
+        cardList.put("children", cardRows);
+
         Map<String, Object> widget = new LinkedHashMap<>();
-        widget.put("type", "ListView");
-        widget.put("children", children);
-        widget.put("limit", 20);
+        widget.put("type", "Card");
+        widget.put("children", List.of(cardList, moreCardsButton));
 
         StringBuilder copyText = new StringBuilder()
                 .append("### 카드 안내\n\n")
@@ -98,7 +116,8 @@ public class PlayMcpWidgetFactory {
         guides.forEach(guide -> copyText
                 .append("- ").append(guide.name())
                 .append(" (`").append(guide.annualFee()).append("`)\n"));
-        copyText.append("\n_연회비와 혜택 조건은 카드 상세 페이지에서 최종 확인해 주세요._");
+        copyText.append("\n[더 많은 카드 보기](").append(MORE_CARDS_URL).append(")")
+                .append("\n\n_연회비와 혜택 조건은 카드 상세 페이지에서 최종 확인해 주세요._");
 
         return new PlayMcpWidgetResponse(widget, copyText.toString());
     }
@@ -214,7 +233,7 @@ public class PlayMcpWidgetFactory {
         return new PlayMcpWidgetResponse(widget, message);
     }
 
-    private Map<String, Object> toCreditCardListViewItem(CreditCardGuideService.CardGuide guide) {
+    private Map<String, Object> toCreditCardListRow(CreditCardGuideService.CardGuide guide) {
         Map<String, Object> cardImage = Map.of(
                 "type", "Image",
                 "src", guide.imageUrl(),
@@ -225,51 +244,67 @@ public class PlayMcpWidgetFactory {
                 "radius", "sm"
         );
 
-        List<Map<String, Object>> badges = new java.util.ArrayList<>();
-        badges.add(Map.of(
-                "type", "Badge",
-                "label", "연회비 " + guide.annualFee(),
-                "color", "info",
-                "variant", "soft"
-        ));
-        if (guide.benefitCategory() != null) {
-            badges.add(Map.of(
-                    "type", "Badge",
-                    "label", guide.benefitCategory() + " 특화",
-                    "color", "success",
-                    "variant", "soft"
-            ));
-        }
-        Map<String, Object> feeAndCategory = Map.of(
+        Map<String, Object> annualFeeRow = Map.of(
                 "type", "Row",
                 "gap", 2,
-                "children", badges
+                "children", List.of(Map.of(
+                        "type", "Badge",
+                        "label", "연회비 " + guide.annualFee(),
+                        "color", "info",
+                        "variant", "soft"
+                ))
         );
+
+        List<Map<String, Object>> detailChildren = new java.util.ArrayList<>();
+        detailChildren.add(Map.of(
+                "type", "Text",
+                "value", guide.name(),
+                "size", "sm",
+                "weight", "semibold",
+                "maxLines", 2
+        ));
+        detailChildren.add(annualFeeRow);
+        if (!guide.benefitCategories().isEmpty()) {
+            detailChildren.add(Map.of(
+                    "type", "Row",
+                    "gap", 2,
+                    "children", guide.benefitCategories().stream()
+                            .map(this::benefitCategoryBadge)
+                            .toList()
+            ));
+        }
 
         Map<String, Object> cardDetails = Map.of(
                 "type", "Col",
                 "gap", 2,
-                "flex", 1,
-                "children", List.of(
-                        Map.of(
-                                "type", "Text",
-                                "value", guide.name(),
-                                "size", "sm",
-                                "weight", "semibold",
-                                "maxLines", 2
-                        ),
-                        feeAndCategory
-                )
+                "flex", "auto",
+                "children", detailChildren
         );
+        Map<String, Object> clickIndicator = new LinkedHashMap<>();
+        clickIndicator.put("type", "Button");
+        clickIndicator.put("label", ">");
+        clickIndicator.put("variant", "ghost");
+        clickIndicator.put("uniform", true);
+        clickIndicator.put("size", "xl");
+        clickIndicator.put("onClickAction", sendUserMessageAction(guide.name() + " 혜택 알려줘"));
 
         Map<String, Object> item = new LinkedHashMap<>();
-        item.put("type", "ListViewItem");
+        item.put("type", "Row");
         item.put("key", guide.name());
-        item.put("gap", 3);
+        item.put("gap", 4);
         item.put("align", "center");
-        item.put("children", List.of(cardImage, cardDetails));
-        item.put("onClickAction", sendUserMessageAction(guide.name() + " 혜택 알려줘"));
+        item.put("padding", Map.of("y", 2));
+        item.put("children", List.of(cardImage, cardDetails, clickIndicator));
         return item;
+    }
+
+    private Map<String, Object> benefitCategoryBadge(String category) {
+        return Map.of(
+                "type", "Badge",
+                "label", category,
+                "color", "success",
+                "variant", "soft"
+        );
     }
 
     private Map<String, Object> selectorButton(String label) {

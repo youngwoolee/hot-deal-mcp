@@ -1,6 +1,10 @@
 package com.joeylee.hot_deal_mcp.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,7 +13,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CreditCardGuideService {
 
-    private static final int MAX_SEARCH_RESULTS = 3;
+    private static final int MAX_SEARCH_RESULTS = 5;
 
     private final CreditCardDataRepository cardRepository;
 
@@ -17,7 +21,7 @@ public class CreditCardGuideService {
             String issuer,
             String name,
             String annualFee,
-            String benefitCategory,
+            List<String> benefitCategories,
             List<String> benefits,
             String imageUrl
     ) {}
@@ -38,11 +42,40 @@ public class CreditCardGuideService {
                         "신한카드",
                         card.title(),
                         formatAnnualFee(card.annualFee()),
-                        industry.isWidgetVisible() ? industry.getWidgetDisplayName() : null,
+                        benefitCategories(industry, card.benefitCodes()),
                         card.benefits(),
                         card.imageUrl()
                 ))
                 .toList();
+    }
+
+    private List<String> benefitCategories(
+            Industry searchedIndustry,
+            List<String> cardBenefitCodes
+    ) {
+        if (!searchedIndustry.isWidgetVisible()) {
+            return List.of();
+        }
+
+        Set<String> otherCategories = new LinkedHashSet<>();
+        for (String benefitCode : cardBenefitCodes) {
+            try {
+                Industry industry = Industry.fromCode(Integer.parseInt(benefitCode));
+                if (industry.isWidgetVisible() && industry != searchedIndustry) {
+                    otherCategories.add(industry.getWidgetDisplayName());
+                }
+            } catch (IllegalArgumentException ignored) {
+                // 알 수 없는 코드는 위젯에 노출하지 않는다.
+            }
+        }
+
+        List<String> randomizedCategories = new ArrayList<>(otherCategories);
+        Collections.shuffle(randomizedCategories);
+
+        List<String> result = new ArrayList<>();
+        result.add(searchedIndustry.getWidgetDisplayName());
+        randomizedCategories.stream().limit(2).forEach(result::add);
+        return List.copyOf(result);
     }
 
     public CardDetail findCardDetail(String cardName) {
