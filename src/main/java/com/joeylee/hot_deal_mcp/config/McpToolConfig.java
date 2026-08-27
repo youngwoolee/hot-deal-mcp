@@ -1,14 +1,14 @@
 package com.joeylee.hot_deal_mcp.config;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.joeylee.hot_deal_mcp.service.AnnualFeeBand;
 import com.joeylee.hot_deal_mcp.service.CreditCardGuideService;
+import com.joeylee.hot_deal_mcp.service.Industry;
 import com.joeylee.hot_deal_mcp.widget.PlayMcpWidgetFactory;
 import com.joeylee.hot_deal_mcp.widget.PlayMcpWidgetResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springaicommunity.mcp.annotation.McpTool;
 import org.springaicommunity.mcp.annotation.McpToolParam;
 import org.springframework.context.annotation.Configuration;
-
 
 @Configuration
 @RequiredArgsConstructor
@@ -139,19 +138,19 @@ public class McpToolConfig {
             PlayMcpWidgetResponse industryClarification,
             PlayMcpWidgetResponse annualFeeClarification
     ) {
-        CreditCardGuideService.Industry parsedIndustry;
+        Industry parsedIndustry;
         try {
             if (industry == null) {
                 throw new IllegalArgumentException("업종 코드를 입력해주세요.");
             }
-            parsedIndustry = CreditCardGuideService.Industry.fromCode(industry);
+            parsedIndustry = Industry.fromCode(industry);
         } catch (IllegalArgumentException exception) {
             return logAndReturn(toolName, industryClarification);
         }
 
-        CreditCardGuideService.AnnualFeeBand parsedAnnualFee;
+        AnnualFeeBand parsedAnnualFee;
         try {
-            parsedAnnualFee = CreditCardGuideService.AnnualFeeBand.fromString(annualFee);
+            parsedAnnualFee = AnnualFeeBand.fromString(annualFee);
         } catch (IllegalArgumentException exception) {
             return logAndReturn(toolName, annualFeeClarification);
         }
@@ -164,17 +163,13 @@ public class McpToolConfig {
     }
 
     private static String industryClarificationText() {
-        String options = Arrays.stream(CreditCardGuideService.Industry.values())
-                .map(CreditCardGuideService.Industry::getDisplayName)
-                .collect(Collectors.joining(", "));
+        String options = String.join(", ", Industry.displayNames());
         return "어떤 업종의 카드 혜택을 원하시는지 다시 말씀해 주세요.\n\n**선택 가능한 업종**: " + options
                 + "\n\n버튼을 눌러 선택하실 수도 있습니다.";
     }
 
     private static String annualFeeClarificationText() {
-        String options = Arrays.stream(CreditCardGuideService.AnnualFeeBand.values())
-                .map(CreditCardGuideService.AnnualFeeBand::getDisplayName)
-                .collect(Collectors.joining(", "));
+        String options = String.join(", ", AnnualFeeBand.displayNames());
         return "원하시는 연회비 구간을 다시 말씀해 주세요.\n\n**선택 가능한 구간**: " + options;
     }
 

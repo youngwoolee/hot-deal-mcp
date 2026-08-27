@@ -61,6 +61,23 @@ class McpToolConfigTest {
 
         assertThat(json.path("widget").path("type").asText()).isEqualTo("ListView");
         assertThat(json.path("widget").path("children")).hasSize(3);
+        JsonNode firstCard = json.path("widget").path("children").get(0);
+        assertThat(firstCard.path("align").asText()).isEqualTo("center");
+        String firstCardName = firstCard.path("children").get(1)
+                .path("children").get(0).path("value").asText();
+        assertThat(firstCardName).isEqualTo("신한카드 Shopping");
+        JsonNode feeAndCategory = firstCard.path("children").get(1)
+                .path("children").get(1);
+        assertThat(feeAndCategory.path("type").asText()).isEqualTo("Row");
+        assertThat(feeAndCategory.path("children").get(0).path("label").asText())
+                .isEqualTo("연회비 0~1만원대");
+        assertThat(feeAndCategory.path("children").get(1).path("label").asText())
+                .isEqualTo("쇼핑 특화");
+        assertThat(firstCard.path("onClickAction").path("payload").path("target")
+                .path("type").asText()).isEqualTo("sendUserMessage");
+        assertThat(firstCard.path("onClickAction").path("payload").path("target")
+                .path("properties").path("text").asText())
+                .isEqualTo(firstCardName + " 혜택 알려줘");
         assertThat(json.path("copy_text").asText()).contains("쇼핑", "0~1만원대");
     }
 

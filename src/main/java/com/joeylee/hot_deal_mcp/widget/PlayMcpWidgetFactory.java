@@ -1,6 +1,5 @@
 package com.joeylee.hot_deal_mcp.widget;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -8,8 +7,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.joeylee.hot_deal_mcp.service.AnnualFeeBand;
 import com.joeylee.hot_deal_mcp.service.CreditCardGuideService;
-import org.springframework.beans.factory.annotation.Value;
+import com.joeylee.hot_deal_mcp.service.Industry;
 import org.springframework.stereotype.Component;
 
 /**
@@ -22,21 +22,8 @@ public class PlayMcpWidgetFactory {
     private static final int MAX_WIDGET_ITEMS = 100;
     private static final int MAX_COPY_TEXT_ITEMS = 10;
     private static final String HOT_DEAL_RANK_URL = "https://www.algumon.com/deal/rank";
-    private static final String DEFAULT_PUBLIC_BASE_URL =
-            "https://a77b-110-12-100-12.ngrok-free.app";
-    private static final String CREDIT_CARD_APPLY_URL =
-            "https://www.shinhancard.com/pconts/html/card/apply/credit/2013775_2207.html";
-    // Rotated portrait derivative of the Shinhan Card plate supplied for this widget.
-    // Source: https://cdn.www.shinhancard.com/pconts/static/images/card/plate/POLE1N_E5_v_f_d.webp
-    private static final String CREDIT_CARD_IMAGE_PATH =
-            "/images/cards/shinhan-hi-point-portrait.webp";
-
-    private String publicBaseUrl = DEFAULT_PUBLIC_BASE_URL;
-
-    @Value("${app.public-base-url:https://a77b-110-12-100-12.ngrok-free.app}")
-    void setPublicBaseUrl(String publicBaseUrl) {
-        this.publicBaseUrl = publicBaseUrl.replaceAll("/+$", "");
-    }
+    private static final String CREDIT_CARD_IMAGE_URL =
+            "https://cdn.www.shinhancard.com/pconts/static/images/card/plate/POLE1N_E5_v_f_d.webp";
 
     public PlayMcpWidgetResponse clarificationNeeded(String message) {
         return new PlayMcpWidgetResponse(null, message);
@@ -48,9 +35,7 @@ public class PlayMcpWidgetFactory {
                 "type", "Text",
                 "value", "어떤 업종의 카드 혜택을 원하시나요?"
         ));
-        children.addAll(selectorButtonRows(Arrays.stream(CreditCardGuideService.Industry.values())
-                .map(CreditCardGuideService.Industry::getDisplayName)
-                .toList()));
+        children.addAll(selectorButtonRows(Industry.displayNames()));
         // 버튼 클릭 시 라벨 텍스트가 재발화로 전달되므로 업종명을 그대로 라벨로 사용한다.
 
         Map<String, Object> widget = new LinkedHashMap<>();
@@ -66,9 +51,7 @@ public class PlayMcpWidgetFactory {
                 "type", "Text",
                 "value", "원하시는 연회비 구간을 선택해주세요"
         ));
-        children.addAll(selectorButtonRows(Arrays.stream(CreditCardGuideService.AnnualFeeBand.values())
-                .map(CreditCardGuideService.AnnualFeeBand::getDisplayName)
-                .toList()));
+        children.addAll(selectorButtonRows(AnnualFeeBand.displayNames()));
 
         Map<String, Object> widget = new LinkedHashMap<>();
         widget.put("type", "Card");
@@ -98,8 +81,8 @@ public class PlayMcpWidgetFactory {
 
     public PlayMcpWidgetResponse creditCardGuideList(
             List<CreditCardGuideService.CardGuide> guides,
-            CreditCardGuideService.Industry industry,
-            CreditCardGuideService.AnnualFeeBand annualFeeBand
+            Industry industry,
+            AnnualFeeBand annualFeeBand
     ) {
         List<Map<String, Object>> children = guides.stream()
                 .map(this::toCreditCardListViewItem)
@@ -123,30 +106,102 @@ public class PlayMcpWidgetFactory {
     }
 
     public PlayMcpWidgetResponse creditCardDetail(CreditCardGuideService.CardDetail detail) {
+        List<Map<String, Object>> children = new java.util.ArrayList<>();
+        children.add(cardDetailHeader(detail));
+        children.add(Map.of("type", "Divider"));
+        children.add(Map.of(
+                "type", "Text",
+                "value", "주요 혜택",
+                "weight", "semibold"
+        ));
+        detail.benefits().stream()
+                .map(this::cardBenefitRow)
+                .forEach(children::add);
+        children.add(detailPageButton(detail.detailPageUrl()));
+
         Map<String, Object> widget = new LinkedHashMap<>();
         widget.put("type", "Card");
-        widget.put("children", List.of(
-                Map.of(
-                        "type", "Text",
-                        "value", detail.name(),
-                        "weight", "semibold"
-                ),
-                Map.of(
-                        "type", "Caption",
-                        "value", detail.issuer(),
-                        "color", "secondary"
-                ),
-                Map.of(
-                        "type", "Text",
-                        "value", detail.summary(),
-                        "color", "secondary"
-                )
-        ));
+        widget.put("children", children);
 
-        String copyText = "### " + detail.name()
-                + "\n\n- 카드사: **" + detail.issuer() + "**"
-                + "\n- 안내: " + detail.summary();
-        return new PlayMcpWidgetResponse(widget, copyText);
+        StringBuilder copyText = new StringBuilder("### ")
+                .append(detail.name())
+                .append("\n\n- 카드사: **").append(detail.issuer()).append("**")
+                .append("\n- 연회비: **").append(detail.annualFee()).append("**")
+                .append("\n\n#### 주요 혜택\n");
+        detail.benefits().forEach(benefit -> copyText.append("- ").append(benefit).append("\n"));
+        copyText.append("\n[자세히 보기](").append(detail.detailPageUrl()).append(")");
+        return new PlayMcpWidgetResponse(widget, copyText.toString());
+    }
+
+    private Map<String, Object> cardDetailHeader(CreditCardGuideService.CardDetail detail) {
+        Map<String, Object> cardImage = Map.of(
+                "type", "Image",
+                "src", CREDIT_CARD_IMAGE_URL,
+                "alt", detail.name() + " 카드 이미지",
+                "width", 112,
+                "height", 72,
+                "fit", "contain",
+                "radius", "sm"
+        );
+        Map<String, Object> cardSummary = Map.of(
+                "type", "Col",
+                "gap", 2,
+                "flex", 1,
+                "children", List.of(
+                        Map.of(
+                                "type", "Text",
+                                "value", detail.name(),
+                                "size", "lg",
+                                "weight", "semibold",
+                                "maxLines", 2
+                        ),
+                        Map.of(
+                                "type", "Caption",
+                                "value", detail.issuer(),
+                                "color", "secondary"
+                        ),
+                        Map.of(
+                                "type", "Badge",
+                                "label", "연회비 " + detail.annualFee(),
+                                "color", "info",
+                                "variant", "soft"
+                        )
+                )
+        );
+
+        return Map.of(
+                "type", "Row",
+                "gap", 3,
+                "align", "start",
+                "children", List.of(cardImage, cardSummary)
+        );
+    }
+
+    private Map<String, Object> cardBenefitRow(String benefit) {
+        return Map.of(
+                "type", "Row",
+                "gap", 2,
+                "children", List.of(
+                        Map.of(
+                                "type", "Text",
+                                "value", "✓",
+                                "weight", "semibold"
+                        ),
+                        Map.of(
+                                "type", "Text",
+                                "value", benefit,
+                                "flex", 1
+                        )
+                )
+        );
+    }
+
+    private Map<String, Object> detailPageButton(String detailPageUrl) {
+        Map<String, Object> button = new LinkedHashMap<>();
+        button.put("type", "Button");
+        button.put("label", "자세히 보기");
+        button.put("onClickAction", openUrlAction(detailPageUrl));
+        return button;
     }
 
     public PlayMcpWidgetResponse cardNameClarification() {
@@ -162,19 +217,17 @@ public class PlayMcpWidgetFactory {
     }
 
     private Map<String, Object> toCreditCardListViewItem(CreditCardGuideService.CardGuide guide) {
-        String primaryBenefit = String.join(" · ", guide.benefits());
-
         Map<String, Object> cardImage = Map.of(
                 "type", "Image",
-                "src", publicBaseUrl + CREDIT_CARD_IMAGE_PATH,
+                "src", CREDIT_CARD_IMAGE_URL,
                 "alt", guide.name() + " 카드 이미지",
-                "width", 72,
-                "height", 112,
+                "width", 112,
+                "height", 72,
                 "fit", "contain",
                 "radius", "sm"
         );
 
-        Map<String, Object> feeAndRequirement = Map.of(
+        Map<String, Object> feeAndCategory = Map.of(
                 "type", "Row",
                 "gap", 2,
                 "children", List.of(
@@ -185,16 +238,17 @@ public class PlayMcpWidgetFactory {
                                 "variant", "soft"
                         ),
                         Map.of(
-                                "type", "Caption",
-                                "value", "전월 실적 " + guide.previousMonthRequirement(),
-                                "color", "secondary"
+                                "type", "Badge",
+                                "label", guide.benefitCategory() + " 특화",
+                                "color", "success",
+                                "variant", "soft"
                         )
                 )
         );
 
         Map<String, Object> cardDetails = Map.of(
                 "type", "Col",
-                "gap", 1,
+                "gap", 2,
                 "flex", 1,
                 "children", List.of(
                         Map.of(
@@ -204,19 +258,7 @@ public class PlayMcpWidgetFactory {
                                 "weight", "semibold",
                                 "maxLines", 2
                         ),
-                        Map.of(
-                                "type", "Caption",
-                                "value", guide.issuer(),
-                                "color", "secondary"
-                        ),
-                        feeAndRequirement,
-                        Map.of(
-                                "type", "Text",
-                                "value", primaryBenefit,
-                                "size", "sm",
-                                "color", "secondary",
-                                "maxLines", 2
-                        )
+                        feeAndCategory
                 )
         );
 
@@ -224,9 +266,9 @@ public class PlayMcpWidgetFactory {
         item.put("type", "ListViewItem");
         item.put("key", guide.name());
         item.put("gap", 3);
-        item.put("align", "start");
+        item.put("align", "center");
         item.put("children", List.of(cardImage, cardDetails));
-        item.put("onClickAction", openUrlAction(CREDIT_CARD_APPLY_URL));
+        item.put("onClickAction", sendUserMessageAction(guide.name() + " 혜택 알려줘"));
         return item;
     }
 

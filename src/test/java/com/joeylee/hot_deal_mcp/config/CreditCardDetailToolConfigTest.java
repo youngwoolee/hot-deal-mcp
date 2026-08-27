@@ -63,10 +63,34 @@ class CreditCardDetailToolConfigTest {
 
         assertThat(result.isError()).isFalse();
         assertThat(json.path("widget").path("type").asText()).isEqualTo("Card");
-        assertThat(json.path("widget").path("children").get(0).path("value").asText())
+        JsonNode children = json.path("widget").path("children");
+        JsonNode header = children.get(0);
+        assertThat(header.path("type").asText()).isEqualTo("Row");
+        JsonNode cardImage = header.path("children").get(0);
+        assertThat(cardImage.path("type").asText()).isEqualTo("Image");
+        assertThat(cardImage.path("src").asText()).isEqualTo(
+                "https://cdn.www.shinhancard.com/pconts/static/images/card/plate/POLE1N_E5_v_f_d.webp"
+        );
+        assertThat(cardImage.path("width").asInt()).isEqualTo(112);
+        assertThat(cardImage.path("height").asInt()).isEqualTo(72);
+        JsonNode cardSummary = header.path("children").get(1);
+        assertThat(cardSummary.path("type").asText()).isEqualTo("Col");
+        assertThat(cardSummary.path("children").get(0).path("value").asText())
                 .isEqualTo("신한카드 SOL트래블 체크");
+        assertThat(cardSummary.path("children").get(2).path("type").asText()).isEqualTo("Badge");
+        assertThat(cardSummary.path("children").get(2).path("label").asText())
+                .isEqualTo("연회비 18,000원");
+        assertThat(children.get(1).path("type").asText()).isEqualTo("Divider");
+        assertThat(children.get(3).path("type").asText()).isEqualTo("Row");
+        assertThat(children.get(3).path("children").get(1).path("value").asText())
+                .isEqualTo("공과금 10% 할인");
+        JsonNode detailButton = children.get(children.size() - 1);
+        assertThat(detailButton.path("type").asText()).isEqualTo("Button");
+        assertThat(detailButton.path("label").asText()).isEqualTo("자세히 보기");
+        assertThat(detailButton.path("onClickAction").path("payload").path("target")
+                .path("url").asText()).startsWith("https://");
         assertThat(json.path("copy_text").asText())
-                .contains("신한카드 SOL트래블 체크")
+                .contains("신한카드 SOL트래블 체크", "연회비", "공과금 10% 할인", "자세히 보기")
                 .doesNotContain("신한 슈퍼SOL 체크");
     }
 
