@@ -2,7 +2,6 @@ package com.joeylee.hot_deal_mcp.service;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -120,16 +119,12 @@ public enum CreditCardName {
             throw new IllegalArgumentException("카드 이름을 입력해주세요.");
         }
 
-        String normalized = normalize(value);
         return Arrays.stream(values())
-                .filter(cardName -> normalize(cardName.displayName).equals(normalized))
+                .filter(cardName -> cardName.displayName.equals(value.trim()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(
                         "지원하지 않는 카드 이름입니다: " + value
                 ));
     }
 
-    private static String normalize(String value) {
-        return value.replaceAll("\\s+", "").toLowerCase(Locale.ROOT);
-    }
 }

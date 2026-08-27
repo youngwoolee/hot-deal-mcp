@@ -2,6 +2,7 @@ package com.joeylee.hot_deal_mcp.service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public enum Industry {
     ANYWHERE(1, "어디서나"),
@@ -29,6 +30,10 @@ public enum Industry {
     POINTS(23, "적립"),
     YOUTH(24, "청소년");
 
+    private static final Set<Integer> WIDGET_VISIBLE_CODES = Set.of(
+            1, 2, 3, 4, 5, 6, 7, 9, 10, 12, 13, 15, 16, 20
+    );
+
     private final int code;
     private final String displayName;
 
@@ -45,9 +50,28 @@ public enum Industry {
         return displayName;
     }
 
+    public String getWidgetDisplayName() {
+        return switch (this) {
+            case AIRLINE -> "마일리지";
+            case AIRPORT -> "공항라운지";
+            default -> displayName;
+        };
+    }
+
+    public boolean isWidgetVisible() {
+        return WIDGET_VISIBLE_CODES.contains(code);
+    }
+
     public static List<String> displayNames() {
         return Arrays.stream(values())
                 .map(Industry::getDisplayName)
+                .toList();
+    }
+
+    public static List<String> widgetDisplayNames() {
+        return Arrays.stream(values())
+                .filter(Industry::isWidgetVisible)
+                .map(Industry::getWidgetDisplayName)
                 .toList();
     }
 

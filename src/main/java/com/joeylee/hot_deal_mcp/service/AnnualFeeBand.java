@@ -24,6 +24,14 @@ public enum AnnualFeeBand {
         return representativeFee;
     }
 
+    public boolean matches(int annualFee) {
+        return switch (this) {
+            case TEN_THOUSAND_RANGE -> annualFee >= 0 && annualFee < 20_000;
+            case THIRTY_THOUSAND_RANGE -> annualFee >= 20_000 && annualFee < 40_000;
+            case NO_LIMIT -> true;
+        };
+    }
+
     public static List<String> displayNames() {
         return Arrays.stream(values())
                 .map(AnnualFeeBand::getDisplayName)

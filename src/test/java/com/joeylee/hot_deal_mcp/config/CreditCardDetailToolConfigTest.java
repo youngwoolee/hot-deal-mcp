@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.joeylee.hot_deal_mcp.service.CreditCardDataRepository;
 import com.joeylee.hot_deal_mcp.service.CreditCardGuideService;
 import com.joeylee.hot_deal_mcp.service.CreditCardName;
 import com.joeylee.hot_deal_mcp.widget.PlayMcpWidgetFactory;
@@ -23,7 +24,7 @@ class CreditCardDetailToolConfigTest {
     @BeforeEach
     void setUp() {
         config = new CreditCardDetailToolConfig(
-                new CreditCardGuideService(),
+                new CreditCardGuideService(new CreditCardDataRepository(objectMapper)),
                 new PlayMcpWidgetFactory(),
                 objectMapper
         );
@@ -69,7 +70,7 @@ class CreditCardDetailToolConfigTest {
         JsonNode cardImage = header.path("children").get(0);
         assertThat(cardImage.path("type").asText()).isEqualTo("Image");
         assertThat(cardImage.path("src").asText()).isEqualTo(
-                "https://cdn.www.shinhancard.com/pconts/static/images/card/plate/POLE1N_E5_v_f_d.webp"
+                "https://cdn.www.shinhancard.com/pconts/static/images/card/plate/BUBDGO_E5_v_f_s.webp"
         );
         assertThat(cardImage.path("width").asInt()).isEqualTo(112);
         assertThat(cardImage.path("height").asInt()).isEqualTo(72);
@@ -79,18 +80,18 @@ class CreditCardDetailToolConfigTest {
                 .isEqualTo("신한카드 SOL트래블 체크");
         assertThat(cardSummary.path("children").get(2).path("type").asText()).isEqualTo("Badge");
         assertThat(cardSummary.path("children").get(2).path("label").asText())
-                .isEqualTo("연회비 18,000원");
+                .isEqualTo("연회비 0원");
         assertThat(children.get(1).path("type").asText()).isEqualTo("Divider");
         assertThat(children.get(3).path("type").asText()).isEqualTo("Row");
         assertThat(children.get(3).path("children").get(1).path("value").asText())
-                .isEqualTo("공과금 10% 할인");
+                .isEqualTo("해외 이용 수수료 · 면제");
         JsonNode detailButton = children.get(children.size() - 1);
         assertThat(detailButton.path("type").asText()).isEqualTo("Button");
         assertThat(detailButton.path("label").asText()).isEqualTo("자세히 보기");
         assertThat(detailButton.path("onClickAction").path("payload").path("target")
                 .path("url").asText()).startsWith("https://");
         assertThat(json.path("copy_text").asText())
-                .contains("신한카드 SOL트래블 체크", "연회비", "공과금 10% 할인", "자세히 보기")
+                .contains("신한카드 SOL트래블 체크", "연회비", "해외 이용 수수료 · 면제", "자세히 보기")
                 .doesNotContain("신한 슈퍼SOL 체크");
     }
 

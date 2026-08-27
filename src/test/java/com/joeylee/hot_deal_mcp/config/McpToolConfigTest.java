@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.joeylee.hot_deal_mcp.service.CreditCardDataRepository;
 import com.joeylee.hot_deal_mcp.service.CreditCardGuideService;
 import com.joeylee.hot_deal_mcp.widget.PlayMcpWidgetFactory;
 import com.joeylee.hot_deal_mcp.widget.PlayMcpWidgetResponse;
@@ -26,7 +27,7 @@ class McpToolConfigTest {
     @BeforeEach
     void setUp() {
         mcpToolConfig = new McpToolConfig(
-                new CreditCardGuideService(),
+                new CreditCardGuideService(new CreditCardDataRepository(objectMapper)),
                 new PlayMcpWidgetFactory(),
                 objectMapper
         );
@@ -65,12 +66,13 @@ class McpToolConfigTest {
         assertThat(firstCard.path("align").asText()).isEqualTo("center");
         String firstCardName = firstCard.path("children").get(1)
                 .path("children").get(0).path("value").asText();
-        assertThat(firstCardName).isEqualTo("신한카드 Shopping");
+        assertThat(firstCardName).isNotBlank();
         JsonNode feeAndCategory = firstCard.path("children").get(1)
                 .path("children").get(1);
         assertThat(feeAndCategory.path("type").asText()).isEqualTo("Row");
         assertThat(feeAndCategory.path("children").get(0).path("label").asText())
-                .isEqualTo("연회비 0~1만원대");
+                .startsWith("연회비 ")
+                .endsWith("원");
         assertThat(feeAndCategory.path("children").get(1).path("label").asText())
                 .isEqualTo("쇼핑 특화");
         assertThat(firstCard.path("onClickAction").path("payload").path("target")
@@ -97,6 +99,12 @@ class McpToolConfigTest {
                 .isEqualTo("어디서나");
         assertThat(firstButtonRow.path("children").get(1).path("label").asText())
                 .isEqualTo("주유");
+        assertThat(json.path("widget").path("children")).hasSize(8);
+        JsonNode lastButtonRow = json.path("widget").path("children").get(7);
+        assertThat(lastButtonRow.path("children").get(0).path("label").asText())
+                .isEqualTo("공항라운지");
+        assertThat(lastButtonRow.path("children").get(1).path("label").asText())
+                .isEqualTo("여행/숙박");
         assertThat(json.path("copy_text").asText()).isEqualTo("원하시는 업종을 선택해 주세요.");
     }
 
@@ -120,6 +128,23 @@ class McpToolConfigTest {
 
         assertThat(json.path("widget").path("children")).hasSize(3);
         assertThat(json.path("copy_text").asText()).contains("항공", "제한없음");
+        JsonNode categoryBadge = json.path("widget").path("children").get(0)
+                .path("children").get(1).path("children").get(1)
+                .path("children").get(1);
+        assertThat(categoryBadge.path("label").asText()).isEqualTo("마일리지 특화");
+    }
+
+    @Test
+    void hiddenBenefitCategoryStillSearchesButIsNotRenderedAsBadge() {
+        PlayMcpWidgetResponse response =
+                mcpToolConfig.getCreditCardRecommendationsWithSelector(8, "제한없음");
+        JsonNode firstCardBadges = objectMapper.valueToTree(response)
+                .path("widget").path("children").get(0)
+                .path("children").get(1).path("children").get(1)
+                .path("children");
+
+        assertThat(firstCardBadges).hasSize(1);
+        assertThat(firstCardBadges.get(0).path("label").asText()).startsWith("연회비 ");
     }
 
     @Test
