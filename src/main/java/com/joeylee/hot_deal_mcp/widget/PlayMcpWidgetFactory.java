@@ -21,6 +21,7 @@ public class PlayMcpWidgetFactory {
 
     private static final int MAX_WIDGET_ITEMS = 100;
     private static final int MAX_COPY_TEXT_ITEMS = 10;
+    private static final int SELECTOR_BUTTONS_PER_ROW = 4;
     private static final String HOT_DEAL_RANK_URL = "https://www.algumon.com/deal/rank";
     private static final String MORE_CARDS_URL =
             "https://www.shinhancard.com/mob/MOBFM039N/MOBFM039C01.shc?crustMenuId=ms467";
@@ -35,7 +36,7 @@ public class PlayMcpWidgetFactory {
                 "type", "Text",
                 "value", "어떤 업종의 카드 혜택을 원하시나요?"
         ));
-        children.addAll(selectorButtonRows(Industry.widgetDisplayNames()));
+        children.addAll(selectorButtonRows(Industry.selectorDisplayNames()));
         // 버튼 클릭 시 라벨 텍스트가 재발화로 전달되므로 업종명을 그대로 라벨로 사용한다.
 
         Map<String, Object> widget = new LinkedHashMap<>();
@@ -62,10 +63,10 @@ public class PlayMcpWidgetFactory {
 
     private List<Map<String, Object>> selectorButtonRows(List<String> labels) {
         List<Map<String, Object>> rows = new java.util.ArrayList<>();
-        for (int index = 0; index < labels.size(); index += 2) {
+        for (int index = 0; index < labels.size(); index += SELECTOR_BUTTONS_PER_ROW) {
             List<Map<String, Object>> buttons = labels.subList(
                             index,
-                            Math.min(index + 2, labels.size())
+                            Math.min(index + SELECTOR_BUTTONS_PER_ROW, labels.size())
                     ).stream()
                     .map(this::selectorButton)
                     .toList();
@@ -142,7 +143,6 @@ public class PlayMcpWidgetFactory {
 
         StringBuilder copyText = new StringBuilder("### ")
                 .append(detail.name())
-                .append("\n\n- 카드사: **").append(detail.issuer()).append("**")
                 .append("\n- 연회비: **").append(detail.annualFee()).append("**")
                 .append("\n\n#### 주요 혜택\n");
         detail.benefits().forEach(benefit -> copyText.append("- ").append(benefit).append("\n"));
@@ -171,11 +171,6 @@ public class PlayMcpWidgetFactory {
                                 "size", "lg",
                                 "weight", "semibold",
                                 "maxLines", 2
-                        ),
-                        Map.of(
-                                "type", "Caption",
-                                "value", detail.issuer(),
-                                "color", "secondary"
                         ),
                         Map.of(
                                 "type", "Badge",

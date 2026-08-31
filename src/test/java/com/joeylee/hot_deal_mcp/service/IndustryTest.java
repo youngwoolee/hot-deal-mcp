@@ -9,7 +9,7 @@ class IndustryTest {
     @Test
     void toolSearchSupportsAllIndustriesWhileWidgetShowsOnlySelectedCategories() {
         assertThat(Industry.values()).hasSize(24);
-        assertThat(Industry.widgetDisplayNames()).containsExactly(
+        assertThat(Industry.selectorDisplayNames()).containsExactly(
                 "어디서나",
                 "주유",
                 "대형마트",

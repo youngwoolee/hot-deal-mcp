@@ -30,7 +30,7 @@ public enum Industry {
     POINTS(23, "적립"),
     YOUTH(24, "청소년");
 
-    private static final Set<Integer> WIDGET_VISIBLE_CODES = Set.of(
+    private static final Set<Integer> SELECTOR_VISIBLE_CODES = Set.of(
             1, 2, 3, 4, 5, 6, 7, 9, 10, 12, 13, 15, 16, 20
     );
 
@@ -58,8 +58,8 @@ public enum Industry {
         };
     }
 
-    public boolean isWidgetVisible() {
-        return WIDGET_VISIBLE_CODES.contains(code);
+    public boolean isSelectorVisible() {
+        return SELECTOR_VISIBLE_CODES.contains(code);
     }
 
     public static List<String> displayNames() {
@@ -68,9 +68,9 @@ public enum Industry {
                 .toList();
     }
 
-    public static List<String> widgetDisplayNames() {
+    public static List<String> selectorDisplayNames() {
         return Arrays.stream(values())
-                .filter(Industry::isWidgetVisible)
+                .filter(Industry::isSelectorVisible)
                 .map(Industry::getWidgetDisplayName)
                 .toList();
     }

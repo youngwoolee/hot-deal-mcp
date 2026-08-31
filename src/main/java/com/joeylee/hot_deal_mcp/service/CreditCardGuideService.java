@@ -35,9 +35,20 @@ public class CreditCardGuideService {
             String imageUrl
     ) {}
 
-    public List<CardGuide> findGuides(int industryCode, AnnualFeeBand annualFeeBand) {
+    public List<CardGuide> findGuides(
+            int industryCode,
+            AnnualFeeBand annualFeeBand,
+            int cardType,
+            CardSortOrder sortOrder
+    ) {
         Industry industry = Industry.fromCode(industryCode);
-        return cardRepository.search(industryCode, annualFeeBand, MAX_SEARCH_RESULTS).stream()
+        return cardRepository.search(
+                        industryCode,
+                        annualFeeBand,
+                        cardType,
+                        sortOrder,
+                        MAX_SEARCH_RESULTS
+                ).stream()
                 .map(card -> new CardGuide(
                         "신한카드",
                         card.title(),
@@ -53,15 +64,11 @@ public class CreditCardGuideService {
             Industry searchedIndustry,
             List<String> cardBenefitCodes
     ) {
-        if (!searchedIndustry.isWidgetVisible()) {
-            return List.of();
-        }
-
         Set<String> otherCategories = new LinkedHashSet<>();
         for (String benefitCode : cardBenefitCodes) {
             try {
                 Industry industry = Industry.fromCode(Integer.parseInt(benefitCode));
-                if (industry.isWidgetVisible() && industry != searchedIndustry) {
+                if (industry != searchedIndustry) {
                     otherCategories.add(industry.getWidgetDisplayName());
                 }
             } catch (IllegalArgumentException ignored) {

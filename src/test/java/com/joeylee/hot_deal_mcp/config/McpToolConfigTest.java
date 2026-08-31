@@ -38,6 +38,8 @@ class McpToolConfigTest {
         Method method = McpToolConfig.class.getDeclaredMethod(
                 "getCreditCardRecommendationsWithSelector",
                 Integer.class,
+                String.class,
+                Integer.class,
                 String.class
         );
         McpTool tool = method.getAnnotation(McpTool.class);
@@ -57,7 +59,7 @@ class McpToolConfigTest {
     @Test
     void recommendationReturnsCuratedWidgetAndMarkdownCopyText() {
         PlayMcpWidgetResponse response =
-                mcpToolConfig.getCreditCardRecommendationsWithSelector(5, "0~1만원대");
+                mcpToolConfig.getCreditCardRecommendationsWithSelector(5, "0~1만원대", null, null);
         JsonNode json = objectMapper.valueToTree(response);
 
         assertThat(json.path("widget").path("type").asText()).isEqualTo("Card");
@@ -111,12 +113,36 @@ class McpToolConfigTest {
                 "https://www.shinhancard.com/mob/MOBFM039N/MOBFM039C01.shc?crustMenuId=ms467"
         );
         assertThat(json.path("copy_text").asText()).contains("쇼핑", "0~1만원대");
+        assertThat(json.path("copy_text").asText()).doesNotContain("체크");
+    }
+
+    @Test
+    void explicitCheckCardRequestReturnsCheckCards() {
+        PlayMcpWidgetResponse response =
+                mcpToolConfig.getCreditCardRecommendationsWithSelector(5, "제한없음", 2, null);
+        JsonNode cardRows = objectMapper.valueToTree(response)
+                .path("widget").path("children").get(0).path("children");
+
+        assertThat(cardRows).isNotEmpty();
+        for (JsonNode cardRow : cardRows) {
+            String cardName = cardRow.path("children").get(1)
+                    .path("children").get(0).path("value").asText();
+            assertThat(cardName).contains("체크");
+        }
+    }
+
+    @Test
+    void youthCategoryReturnsCheckCardsEvenWhenCreditCardTypeIsRequested() {
+        PlayMcpWidgetResponse response =
+                mcpToolConfig.getCreditCardRecommendationsWithSelector(24, "제한없음", 1, null);
+
+        assertThat(response.copyText()).contains("신한카드 처음 체크");
     }
 
     @Test
     void missingIndustryReturnsSelectorWidget() {
         PlayMcpWidgetResponse response =
-                mcpToolConfig.getCreditCardRecommendationsWithSelector(null, "제한없음");
+                mcpToolConfig.getCreditCardRecommendationsWithSelector(null, "제한없음", null, null);
         JsonNode json = objectMapper.valueToTree(response);
 
         assertThat(json.path("widget").path("type").asText()).isEqualTo("Card");
@@ -124,13 +150,17 @@ class McpToolConfigTest {
                 .contains("업종");
         JsonNode firstButtonRow = json.path("widget").path("children").get(1);
         assertThat(firstButtonRow.path("type").asText()).isEqualTo("Row");
-        assertThat(firstButtonRow.path("children")).hasSize(2);
+        assertThat(firstButtonRow.path("children")).hasSize(4);
         assertThat(firstButtonRow.path("children").get(0).path("label").asText())
                 .isEqualTo("어디서나");
         assertThat(firstButtonRow.path("children").get(1).path("label").asText())
                 .isEqualTo("주유");
-        assertThat(json.path("widget").path("children")).hasSize(8);
-        JsonNode lastButtonRow = json.path("widget").path("children").get(7);
+        assertThat(firstButtonRow.path("children").get(2).path("label").asText())
+                .isEqualTo("대형마트");
+        assertThat(firstButtonRow.path("children").get(3).path("label").asText())
+                .isEqualTo("편의점");
+        assertThat(json.path("widget").path("children")).hasSize(5);
+        JsonNode lastButtonRow = json.path("widget").path("children").get(4);
         assertThat(lastButtonRow.path("children").get(0).path("label").asText())
                 .isEqualTo("공항라운지");
         assertThat(lastButtonRow.path("children").get(1).path("label").asText())
@@ -139,21 +169,20 @@ class McpToolConfigTest {
     }
 
     @Test
-    void annualFeeSelectorPlacesTwoButtonsPerRow() {
+    void annualFeeSelectorPlacesUpToFourButtonsPerRow() {
         PlayMcpWidgetResponse response =
-                mcpToolConfig.getCreditCardRecommendationsWithSelector(5, "지원하지 않는 구간");
+                mcpToolConfig.getCreditCardRecommendationsWithSelector(5, "지원하지 않는 구간", null, null);
         JsonNode children = objectMapper.valueToTree(response).path("widget").path("children");
 
         assertThat(children.get(1).path("type").asText()).isEqualTo("Row");
-        assertThat(children.get(1).path("children")).hasSize(2);
-        assertThat(children.get(2).path("type").asText()).isEqualTo("Row");
-        assertThat(children.get(2).path("children")).hasSize(1);
+        assertThat(children.get(1).path("children")).hasSize(3);
+        assertThat(children).hasSize(2);
     }
 
     @Test
     void missingAnnualFeeDefaultsToNoLimit() {
         PlayMcpWidgetResponse response =
-                mcpToolConfig.getCreditCardRecommendationsWithSelector(15, null);
+                mcpToolConfig.getCreditCardRecommendationsWithSelector(15, null, null, null);
         JsonNode json = objectMapper.valueToTree(response);
 
         JsonNode cardList = json.path("widget").path("children").get(0);
@@ -166,22 +195,22 @@ class McpToolConfigTest {
     }
 
     @Test
-    void hiddenBenefitCategoryStillSearchesButIsNotRenderedAsBadge() {
+    void categoryHiddenFromSelectorIsRenderedAsRecommendationBadge() {
         PlayMcpWidgetResponse response =
-                mcpToolConfig.getCreditCardRecommendationsWithSelector(8, "제한없음");
+                mcpToolConfig.getCreditCardRecommendationsWithSelector(11, "제한없음", null, null);
         JsonNode firstCardBadges = objectMapper.valueToTree(response)
                 .path("widget").path("children").get(0).path("children").get(0)
-                .path("children").get(1).path("children").get(1)
+                .path("children").get(1).path("children").get(2)
                 .path("children");
 
-        assertThat(firstCardBadges).hasSize(1);
-        assertThat(firstCardBadges.get(0).path("label").asText()).startsWith("연회비 ");
+        assertThat(firstCardBadges).isNotEmpty();
+        assertThat(firstCardBadges.get(0).path("label").asText()).isEqualTo("공과금");
     }
 
     @Test
     void unexpectedFailureReturnsOnlySanitizedMessage() {
         CreditCardGuideService failingService = mock(CreditCardGuideService.class);
-        when(failingService.findGuides(anyInt(), any()))
+        when(failingService.findGuides(anyInt(), any(), anyInt(), any()))
                 .thenThrow(new IllegalStateException("internal database details"));
         McpToolConfig failingConfig = new McpToolConfig(
                 failingService,
@@ -190,7 +219,7 @@ class McpToolConfigTest {
         );
 
         assertThatThrownBy(() ->
-                failingConfig.getCreditCardRecommendationsWithSelector(5, "제한없음"))
+                failingConfig.getCreditCardRecommendationsWithSelector(5, "제한없음", null, null))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("### 카드 정보를 불러오지 못했습니다.\n\n잠시 후 다시 시도해 주세요.")
                 .hasNoCause();

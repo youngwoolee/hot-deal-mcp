@@ -78,8 +78,8 @@ class CreditCardDetailToolConfigTest {
         assertThat(cardSummary.path("type").asText()).isEqualTo("Col");
         assertThat(cardSummary.path("children").get(0).path("value").asText())
                 .isEqualTo("신한카드 SOL트래블 체크");
-        assertThat(cardSummary.path("children").get(2).path("type").asText()).isEqualTo("Badge");
-        assertThat(cardSummary.path("children").get(2).path("label").asText())
+        assertThat(cardSummary.path("children").get(1).path("type").asText()).isEqualTo("Badge");
+        assertThat(cardSummary.path("children").get(1).path("label").asText())
                 .isEqualTo("연회비 0원");
         assertThat(children.get(1).path("type").asText()).isEqualTo("Divider");
         assertThat(children.get(3).path("type").asText()).isEqualTo("Row");

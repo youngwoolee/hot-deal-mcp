@@ -14,6 +14,7 @@
           "svtptt2" : "최대 5% 네이버페이 포인트 적립",
           "svtptt1" : "최대 20% 현장할인",
           "url" : "/pconts/html/card/apply/credit/1229798_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "CU, 네이버페이, 쇼핑, 간편결제, 편의점, 네이버, NAVER Pay, 온라인 쇼핑, 할인, 멤버십",
           "pvafeat" : 16000,
           "svtcd" : [
@@ -41,6 +42,7 @@
           "svtptt2" : "이용건별 포인트 적립",
           "svtptt1" : "1천원 미만 금액 포인트 적립",
           "url" : "/pconts/html/card/apply/credit/1215320_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "이츠모아, Eats, Eats More, 이츠, 모아, More",
           "pvafeat" : 15000,
           "svtcd" : [
@@ -68,6 +70,7 @@
           "svtptt2" : "20% 할인",
           "svtptt1" : "30% 할인",
           "url" : "/pconts/html/card/apply/credit/1216792_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "대중교통, 교통, 티머니, K-패스, K패스, 케이패스, 모바일티머니, 티머니GO, 티머니고, 티머니페이, 페이엔고, 고속버스, 시외버스, 택시",
           "pvafeat" : 15000,
           "svtcd" : [
@@ -99,6 +102,7 @@
           "svtptt2" : "본인 무료 입장",
           "svtptt1" : "면제",
           "url" : "/pconts/html/card/apply/check/1225714_2206.html",
+          "cardType" : 2,
           "sh_keyword" : "SOL트래블, SOL, 트래블, 여행, 해외, 해외여행, 짱구, 도라에몽, 냐한남자",
           "pvafeat" : 0,
           "svtcd" : [
@@ -126,6 +130,7 @@
           "svtptt2" : "총 2% 적립",
           "svtptt1" : "0.3% 적립",
           "url" : "/pconts/html/card/apply/check/1196727_2206.html",
+          "cardType" : 2,
           "sh_keyword" : "플러스, 멤버십, 신한플러스멤버십, 적금, 포인트, 마이신한포인트, 슈퍼, 슈퍼SOL, 슈퍼쏠, super, 슈퍼쏠체크, 슈퍼sol체크",
           "pvafeat" : 0,
           "svtcd" : [
@@ -155,6 +160,7 @@
           "svtptt2" : "추가 0.5% 캐시백",
           "svtptt1" : "0.5% 캐시백",
           "url" : "/pconts/html/card/apply/credit/1195348_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "국민내일배움 신한카드 Simple",
           "pvafeat" : 5000,
           "svtcd" : [
@@ -181,6 +187,7 @@
           "svtptt2" : "포인트 적립",
           "svtptt1" : "0.2~1% 적립",
           "url" : "/pconts/html/card/apply/check/1226114_2206.html",
+          "cardType" : 2,
           "sh_keyword" : "포인트플랜, 전가맹점, 일상 생활비, 필수 생활비",
           "pvafeat" : 0,
           "svtcd" : [
@@ -208,6 +215,7 @@
           "svtptt2" : "10% 캐시백",
           "svtptt1" : "10% 캐시백",
           "url" : "/pconts/html/card/apply/check/1229905_2206.html",
+          "cardType" : 2,
           "sh_keyword" : "외국인, 글로벌, 유학생, GLOBAL, 외국카드, 케이원패스",
           "pvafeat" : 0,
           "svtcd" : [
@@ -235,6 +243,7 @@
           "svtptt2" : null,
           "svtptt1" : "월 최대 1만 5천원",
           "url" : "/pconts/html/card/apply/credit/1219175_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "알뜰, 알뜰모아, 알뜰모어, 알뜰More, 알뜰폰, 알뜰허브, 알뜰hub, 알뜰Hub",
           "pvafeat" : 20000,
           "svtcd" : [
@@ -260,6 +269,7 @@
           "svtptt2" : "2% 적립",
           "svtptt1" : "2% 적립",
           "url" : "/pconts/html/card/apply/check/1214936_2206.html",
+          "cardType" : 2,
           "sh_keyword" : "On, 적립, 간편결제, 생활편의, 해외이용금액, 미니언즈",
           "pvafeat" : 0,
           "svtcd" : [
@@ -290,6 +300,7 @@
           "svtptt2" : "2% 적립",
           "svtptt1" : "5% 적립",
           "url" : "/pconts/html/card/apply/check/1214928_2206.html",
+          "cardType" : 2,
           "sh_keyword" : "Way, 적립, 대중교통, 생활편의, 해외이용, 미니언즈",
           "pvafeat" : 0,
           "svtcd" : [
@@ -320,6 +331,7 @@
           "svtptt2" : "10% 적립",
           "svtptt1" : "10% 적립",
           "url" : "/pconts/html/card/apply/check/1221536_2206.html",
+          "cardType" : 2,
           "sh_keyword" : "픽, 픽체크, 픽카드, pick체크, 짱구카드, 짱구체크",
           "pvafeat" : 0,
           "svtcd" : [
@@ -347,6 +359,7 @@
           "svtptt2" : "10% 할인",
           "svtptt1" : "10% 할인",
           "url" : "/pconts/html/card/apply/credit/1216901_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "수소차,친환경,충전소",
           "pvafeat" : 20000,
           "svtcd" : [
@@ -375,6 +388,7 @@
           "svtptt2" : "최대 5천원 캐시백 ",
           "svtptt1" : "최대 5천원 캐시백 ",
           "url" : "/pconts/html/card/apply/check/1196867_2206.html",
+          "cardType" : 2,
           "sh_keyword" : "",
           "pvafeat" : 0,
           "svtcd" : [
@@ -406,6 +420,7 @@
           "svtptt2" : "3~5% 할인",
           "svtptt1" : "5% 할인",
           "url" : "/pconts/html/card/apply/credit/1188439_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "",
           "pvafeat" : 12000,
           "svtcd" : [
@@ -434,6 +449,7 @@
           "svtptt2" : "5천원 캐시백",
           "svtptt1" : "5~10% 캐시백",
           "url" : "/pconts/html/card/apply/credit/1188281_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "학원비,학원비 결제,학원비 할인,에듀,에듀카드",
           "pvafeat" : 20000,
           "svtcd" : [
@@ -463,6 +479,7 @@
           "svtptt2" : "1% 적립",
           "svtptt1" : "0.5% 적립",
           "url" : "/pconts/html/card/apply/credit/1188443_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "11번가,sk 페이,SK pay",
           "pvafeat" : 5000,
           "svtcd" : [
@@ -489,6 +506,7 @@
           "svtptt2" : "20~50% 할인",
           "svtptt1" : "0.1% 적립",
           "url" : "/pconts/html/card/apply/check/1188329_2206.html",
+          "cardType" : 2,
           "sh_keyword" : "",
           "pvafeat" : 0,
           "svtcd" : [
@@ -515,6 +533,7 @@
           "svtptt2" : "10% 할인",
           "svtptt1" : "10% 할인",
           "url" : "/pconts/html/card/apply/credit/1187935_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "",
           "pvafeat" : 20000,
           "svtcd" : [
@@ -543,6 +562,7 @@
           "svtptt2" : "80원/ℓ할인",
           "svtptt1" : "자동 환급",
           "url" : "/pconts/html/card/apply/credit/1188377_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "",
           "pvafeat" : 0,
           "svtcd" : [
@@ -573,6 +593,7 @@
           "svtptt2" : "24개월 연 5.9%",
           "svtptt1" : "월 최대 1만 5천원",
           "url" : "/pconts/html/card/apply/credit/1202226_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "엘지 유플러스 보라, 스마트할부, 통신할인",
           "pvafeat" : 22000,
           "svtcd" : [
@@ -600,6 +621,7 @@
           "svtptt2" : "추가 적립",
           "svtptt1" : "마일리지 적립",
           "url" : "/pconts/html/card/apply/credit/1187946_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "에어, dpdj, Air, 애어, 플래티늄#, 플래티늄샵, Platinum#, 마일리지, 마일리지 적립, 스카이패스, 아시아나, 대한항공, 아시아나클럽, 마일리지 전환, 마일리지 스왑, 마일리지 swap, 콤보, Combo, zhaqh, 콤보서비스,청구할인,프리미엄 서비스, 플래티늄 서비스, VIP서비스, 골프, 해외, 해외직구, 주유, 패션, 쇼핑, 요식, 음식점, 거리 적립",
           "pvafeat" : 37000,
           "svtcd" : [
@@ -626,6 +648,7 @@
           "svtptt2" : "10% 적립",
           "svtptt1" : "10% 적립",
           "url" : "/pconts/html/card/apply/check/1221538_2206.html",
+          "cardType" : 2,
           "sh_keyword" : "픽, 픽체크, 픽카드, pick체크, 짱구카드, 짱구체크",
           "pvafeat" : 0,
           "svtcd" : [
@@ -654,6 +677,7 @@
           "svtptt2" : "월 2회 할인 쿠폰 제공",
           "svtptt1" : "최대 0.3% 할인",
           "url" : "/pconts/html/card/apply/check/1216831_2206.html",
+          "cardType" : 2,
           "sh_keyword" : "신한카드 플리, 플리, 플레이, 플레이리스트, PLAY, PLAYLIST, play, playlist, 쿠키런, 플리 쿠키런, 플리 체크 쿠키런, 플리 쿠키런 체크, 쿠키런 킹덤, 쿠키",
           "pvafeat" : 0,
           "svtcd" : [
@@ -679,6 +703,7 @@
           "svtptt2" : "월 최대 1만5천원",
           "svtptt1" : "18/24개월 연 5.9%",
           "url" : "/pconts/html/card/apply/credit/1196321_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "엘지유플러스, 스마트플랜 플러스, 통신할인, 스마트할부",
           "pvafeat" : 22000,
           "svtcd" : [
@@ -704,6 +729,7 @@
           "svtptt2" : "10% 할인",
           "svtptt1" : "3% 할인",
           "url" : "/pconts/html/card/apply/check/1232098_2206.html",
+          "cardType" : 2,
           "sh_keyword" : "전통,전통시장,전통시장사랑",
           "pvafeat" : 0,
           "svtcd" : [
@@ -730,6 +756,7 @@
           "svtptt2" : "50% 결제일 할인",
           "svtptt1" : "면제",
           "url" : "/pconts/html/card/apply/check/1232877_2206.html",
+          "cardType" : 2,
           "sh_keyword" : "SOL트래블, 솔트래블, SOL트래블J, 솔트래블J, 솔트래블제이",
           "pvafeat" : 0,
           "svtcd" : [
@@ -758,6 +785,7 @@
           "svtptt2" : "포인트 적립",
           "svtptt1" : "결제일 할인",
           "url" : "/pconts/html/card/apply/credit/1234346_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "LG전자구독, 엘지전자구독, 엘지구독, 더구독케어, The구독케어, The 구독케어, 구독케어",
           "pvafeat" : 22000,
           "svtcd" : [
@@ -785,6 +813,7 @@
           "svtptt2" : "추가 2% 적립",
           "svtptt1" : "최대 10% 적립",
           "url" : "/pconts/html/card/apply/credit/1233141_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "GS,GS25,편의점,GS SHOP,GS슈퍼,GS더프레시,우리동네GS,홈쇼핑",
           "pvafeat" : 15000,
           "svtcd" : [
@@ -812,6 +841,7 @@
           "svtptt2" : "포인트 적립",
           "svtptt1" : "참여 호텔 무료 숙박권",
           "url" : "/pconts/html/card/apply/premium/1200288_2205.html",
+          "cardType" : 1,
           "sh_keyword" : "본보이, BONVOY, Bonvoy, Marriott, MARRIOTT, 신한 메리어트, 메리어트카드, Marriott Bonvoy, MARRIOTT BONVOY",
           "pvafeat" : 264000,
           "svtcd" : [
@@ -839,6 +869,7 @@
           "svtptt2" : null,
           "svtptt1" : "최대 2만원",
           "url" : "/pconts/html/card/apply/credit/1234492_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "신한카드, 넥센타이어, 타이어, 렌탈",
           "pvafeat" : 15000,
           "svtcd" : [
@@ -864,6 +895,7 @@
           "svtptt2" : "5~7% 적립",
           "svtptt1" : "5% 적립",
           "url" : "/pconts/html/card/apply/check/1234710_2206.html",
+          "cardType" : 2,
           "sh_keyword" : "처음, 처음 체크",
           "pvafeat" : 0,
           "svtcd" : [
@@ -892,6 +924,7 @@
           "svtptt2" : "1~5%포인트 적립",
           "svtptt1" : "플러스 서비스 신청",
           "url" : "/pconts/html/card/apply/credit/1228909_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "LGE.COM, LG, LG전자, 가전제품",
           "pvafeat" : 25000,
           "svtcd" : [
@@ -921,6 +954,7 @@
           "svtptt2" : "최대 2.5% 적립",
           "svtptt1" : "1.3% 면제",
           "url" : "/pconts/html/card/apply/check/1236362_2206.html",
+          "cardType" : 2,
           "sh_keyword" : "SOL트래블, SOL트립, SOL트립앤샵, 쏠트래블, 쏠트립앤샵, 쏠트립, SOLTRIP, SOLTRIP&SHOP",
           "pvafeat" : 0,
           "svtcd" : [
@@ -949,6 +983,7 @@
           "svtptt2" : "포인트 적립",
           "svtptt1" : "0.5~3% 적립",
           "url" : "/pconts/html/card/apply/credit/1231784_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "산리오, 캐릭터, 쿠로미, 포차코",
           "pvafeat" : 20000,
           "svtcd" : [
@@ -976,6 +1011,7 @@
           "svtptt2" : "10% 할인",
           "svtptt1" : "서비스 제공",
           "url" : "/pconts/html/card/apply/credit/1230340_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "후불, 기후동행, 서울시, 기동카, 후불 기후동행, 서울, 교통, 대중교통",
           "pvafeat" : 9000,
           "svtcd" : [
@@ -1004,6 +1040,7 @@
           "svtptt2" : "최대 20% 적립",
           "svtptt1" : "5% 적립",
           "url" : "/pconts/html/card/apply/credit/1227020_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "사회초년생, 처음, 첫, 첫카드, CJDMA, cjdma",
           "pvafeat" : 0,
           "svtcd" : [
@@ -1033,6 +1070,7 @@
           "svtptt2" : "정기결제까지",
           "svtptt1" : "7만 5천 포인트 적립",
           "url" : "/pconts/html/card/apply/credit/1239172_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "포인트박스,적립",
           "pvafeat" : 50000,
           "svtcd" : [
@@ -1061,6 +1099,7 @@
           "svtptt2" : "정기결제까지",
           "svtptt1" : "7만 5천 포인트 적립",
           "url" : "/pconts/html/card/apply/credit/1239171_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "포인트박스,적립",
           "pvafeat" : 50000,
           "svtcd" : [
@@ -1089,6 +1128,7 @@
           "svtptt2" : "최대 20% 적립",
           "svtptt1" : "5% 적립",
           "url" : "/pconts/html/card/apply/credit/1239095_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "사회초년생, 처음, 첫, 첫카드, CJDMA, cjdma",
           "pvafeat" : 15000,
           "svtcd" : [
@@ -1118,6 +1158,7 @@
           "svtptt2" : "최대 5천 포인트 적립",
           "svtptt1" : "최대 2%적립",
           "url" : "/pconts/html/card/apply/check/1239102_2206.html",
+          "cardType" : 2,
           "sh_keyword" : "은행, 쏠, 오티티, 구독, 플랜,쏘",
           "pvafeat" : 0,
           "svtcd" : [
@@ -1145,6 +1186,7 @@
           "svtptt2" : "최대20% 캐시백",
           "svtptt1" : "20% 캐시백",
           "url" : "/pconts/html/card/apply/check/1236922_2206.html",
+          "cardType" : 2,
           "sh_keyword" : "나라사랑, 나라, 군인, px, 군대, 나사카",
           "pvafeat" : 0,
           "svtcd" : [
@@ -1173,6 +1215,7 @@
           "svtptt2" : "17% 할인",
           "svtptt1" : "17% 할인",
           "url" : "/pconts/html/card/apply/credit/2013505_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "토스, TOSS, Toss, toss, 페이스페이, FACE PAY",
           "pvafeat" : 27000,
           "svtcd" : [
@@ -1201,6 +1244,7 @@
           "svtptt2" : "최대20% 캐시백",
           "svtptt1" : "20% 캐시백",
           "url" : "/pconts/html/card/apply/check/2013660_2206.html",
+          "cardType" : 2,
           "sh_keyword" : "나라사랑, 나라, 군인, px, 군대, 나사카",
           "pvafeat" : 0,
           "svtcd" : [
@@ -1229,6 +1273,7 @@
           "svtptt2" : null,
           "svtptt1" : "최대 2만5천원 할인",
           "url" : "/pconts/html/card/apply/credit/1239158_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "캐리어, 에어컨, 에어컨, 렌탈, 대여",
           "pvafeat" : 30000,
           "svtcd" : [
@@ -1256,6 +1301,7 @@
           "svtptt2" : null,
           "svtptt1" : "최대 3만원",
           "url" : "/pconts/html/card/apply/credit/1239159_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "캐리어, 에어컨, 에어컨, 렌탈, 대여",
           "pvafeat" : 30000,
           "svtcd" : [
@@ -1283,6 +1329,7 @@
           "svtptt2" : "최대 2천원 할인",
           "svtptt1" : "최대 1만원 할인",
           "url" : "/pconts/html/card/apply/credit/2013495_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "SKT T&Life 신한카드, SKT, T&Life, T앤Life, 티앤라이프, SKT 통신할인, 통신할인",
           "pvafeat" : 27000,
           "svtcd" : [
@@ -1311,6 +1358,7 @@
           "svtptt2" : "매주 할인 쿠폰(월 4회)",
           "svtptt1" : "최대 0.9% 결제일 할인",
           "url" : "/pconts/html/card/apply/credit/1220329_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "산리오, 마이멜로디, 쿠로미, 헬로키티, 시나모롤",
           "pvafeat" : 15000,
           "svtcd" : [
@@ -1336,6 +1384,7 @@
           "svtptt2" : "2마일/1,500원",
           "svtptt1" : "1만 5천 마일 적립",
           "url" : "/pconts/html/card/apply/premium/1221024_2205.html",
+          "cardType" : 1,
           "sh_keyword" : "싱가포르, 싱가폴, 싱가포르항공, singapore, kris, krisflyer, singapore air, 크리스, 크리스플라이어, 마일리지, 마일, 해외, 골프, 면세점, 항공, 여행, 라운지",
           "pvafeat" : 247000,
           "svtcd" : [
@@ -1378,6 +1427,7 @@
           "svtptt2" : "10% 결제일 할인",
           "svtptt1" : "10% 결제일 할인",
           "url" : "/pconts/html/card/apply/credit/1231466_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "알리익스프레스, 알리익스프레스 신한카드, Aliexpress",
           "pvafeat" : 16000,
           "svtcd" : [
@@ -1406,6 +1456,7 @@
           "svtptt2" : "2배 적립",
           "svtptt1" : "1천원당 1마일 적립",
           "url" : "/pconts/html/card/apply/credit/1187901_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "신한카드 에어 원,마일리지,항공,면세점,해외",
           "pvafeat" : 49000,
           "svtcd" : [
@@ -1447,6 +1498,7 @@
           "svtptt2" : "5~10% 할인",
           "svtptt1" : "10% 할인",
           "url" : "/pconts/html/card/apply/credit/1232369_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "Discount, Plan, 디스카운트, 디스카운트플랜",
           "pvafeat" : 15000,
           "svtcd" : [
@@ -1475,6 +1527,7 @@
           "svtptt2" : "5~10% 할인",
           "svtptt1" : "10% 할인",
           "url" : "/pconts/html/card/apply/credit/1232390_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "Discount, Plan, Plan+, 디스카운트, 디스카운트플랜, 디스카운트플랜플러스, 플랜플러스",
           "pvafeat" : 50000,
           "svtcd" : [
@@ -1503,6 +1556,7 @@
           "svtptt2" : "10% 할인",
           "svtptt1" : "10% 할인",
           "url" : "/pconts/html/card/apply/credit/1188274_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "하이포인트,hipoint,gkdlvhdlsxm,상품권,포인트카드,포인트최고5%적립,포인트 적립,Hi-Point,무이자할부,점자카드,점자,시각장애인,시각장애용",
           "pvafeat" : 10000,
           "svtcd" : [
@@ -1531,6 +1585,7 @@
           "svtptt2" : "5~20% 캐시백",
           "svtptt1" : "30~50% 캐시백",
           "url" : "/pconts/html/card/apply/credit/1219683_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "전기차, 충전, 충전소, 전기, EV",
           "pvafeat" : 0,
           "svtcd" : [
@@ -1559,6 +1614,7 @@
           "svtptt2" : "10% 할인",
           "svtptt1" : "10% 할인",
           "url" : "/pconts/html/card/apply/credit/1187937_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "Mr.Life,mr, life, mrlife,미스터,라이프,미스터라이프,공과금,월납,월납할인",
           "pvafeat" : 15000,
           "svtcd" : [
@@ -1589,6 +1645,7 @@
           "svtptt2" : "최대 20% 적립",
           "svtptt1" : "5% 적립",
           "url" : "/pconts/html/card/apply/credit/1229296_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "처음,우주,허블,애니버스,기념일,사회초년생,CJDMA,cjdma",
           "pvafeat" : 0,
           "svtcd" : [
@@ -1617,6 +1674,7 @@
           "svtptt2" : "10% 할인",
           "svtptt1" : "0.2% 적립",
           "url" : "/pconts/html/card/apply/credit/1238499_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "",
           "pvafeat" : 20000,
           "svtcd" : [
@@ -1644,6 +1702,7 @@
           "svtptt2" : "10% 할인",
           "svtptt1" : "최대 15% 할인",
           "url" : "/pconts/html/card/apply/credit/1188279_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "딥스토어,생활쇼핑할인,주말할인,DEEP STORE,해외적립",
           "pvafeat" : 13000,
           "svtcd" : [
@@ -1674,6 +1733,7 @@
           "svtptt2" : null,
           "svtptt1" : "최대 3만원",
           "url" : "/pconts/html/card/apply/credit/1234723_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "코웨이,할인,렌탈,정수기,비데",
           "pvafeat" : 27000,
           "svtcd" : [
@@ -1700,6 +1760,7 @@
           "svtptt2" : "캐시백 월 최대 4천원",
           "svtptt1" : "월 최대 10만원",
           "url" : "/pconts/html/card/apply/credit/1228598_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "에듀플랜+, Edu, Plan, +, Plan+, 교육비, 학원비, 할인, 캐시백",
           "pvafeat" : 0,
           "svtcd" : [
@@ -1730,6 +1791,7 @@
           "svtptt2" : "10% 할인",
           "svtptt1" : "10% 할인",
           "url" : "/pconts/html/card/apply/credit/1200235_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "국가바우처, 아이행복, 고운맘, 임출산, 기저귀, 분유, 에너지, 위생용품",
           "pvafeat" : 0,
           "svtcd" : [
@@ -1757,6 +1819,7 @@
           "svtptt2" : "1% 적립",
           "svtptt1" : "3.5% 적립",
           "url" : "/pconts/html/card/apply/credit/1233082_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "",
           "pvafeat" : 30000,
           "svtcd" : [
@@ -1785,6 +1848,7 @@
           "svtptt2" : "월 최대 1만5천원",
           "svtptt1" : "24개월 연 5.9%",
           "url" : "/pconts/html/card/apply/credit/1196330_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "에스케이티 티라이트, 통신할인, 라이트할부",
           "pvafeat" : 22000,
           "svtcd" : [
@@ -1810,6 +1874,7 @@
           "svtptt2" : null,
           "svtptt1" : "월 최대 1만 5천원",
           "url" : "/pconts/html/card/apply/credit/1223352_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "KT, 가족만족, 통신요금 할인",
           "pvafeat" : 15000,
           "svtcd" : [
@@ -1835,6 +1900,7 @@
           "svtptt2" : "1% 할인",
           "svtptt1" : "5% 할인",
           "url" : "/pconts/html/card/apply/credit/1234575_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "배민,배달의민족,배달",
           "pvafeat" : 12000,
           "svtcd" : [
@@ -1859,6 +1925,7 @@
           "svtptt2" : "20% 할인",
           "svtptt1" : "최대 20% 할인",
           "url" : "/pconts/html/card/apply/credit/1188280_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "딥온플래티늄플러스,간편결제 할인,플래티늄+,항공할인,해외할인",
           "pvafeat" : 30000,
           "svtcd" : [
@@ -1890,6 +1957,7 @@
           "svtptt2" : "1.5% 포인트 기본적립",
           "svtptt1" : "1% 포인트 기본적립",
           "url" : "/pconts/html/card/apply/credit/1230483_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "biz plan, biz, plan, business, 사업자, 개인사업자, 경비",
           "pvafeat" : 30000,
           "svtcd" : [
@@ -1919,6 +1987,7 @@
           "svtptt2" : "10% 할인",
           "svtptt1" : "최대 600원 할인",
           "url" : "/pconts/html/card/apply/credit/1187938_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "",
           "pvafeat" : 10000,
           "svtcd" : [
@@ -1949,6 +2018,7 @@
           "svtptt2" : "최대 1만 5천원 적립",
           "svtptt1" : "최대 5% 적립",
           "url" : "/pconts/html/card/apply/credit/1235253_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "은행, 쏠, 플랜, 유튜브, 주유, 병원, plan",
           "pvafeat" : 30000,
           "svtcd" : [
@@ -1978,6 +2048,7 @@
           "svtptt2" : "최대 5천 포인트 적립",
           "svtptt1" : "0.7~3% 적립",
           "url" : "/pconts/html/card/apply/credit/1228407_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "포인트플랜플러스, Point Plan+, 포인트플러스, 전가맹점, 포인트적립",
           "pvafeat" : 30000,
           "svtcd" : [
@@ -2019,6 +2090,7 @@
           "svtptt2" : "포인트 적립",
           "svtptt1" : "0.5~3% 적립",
           "url" : "/pconts/html/card/apply/credit/1226113_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "포인트플랜, 전가맹점, 일상 생활비, 필수 생활비",
           "pvafeat" : 20000,
           "svtcd" : [
@@ -2060,6 +2132,7 @@
           "svtptt2" : "최대 5% 적립",
           "svtptt1" : "옵션품목 중 택1",
           "url" : "/pconts/html/card/apply/premium/1187940_2205.html",
+          "cardType" : 1,
           "sh_keyword" : "",
           "pvafeat" : 100000,
           "svtcd" : [
@@ -2102,6 +2175,7 @@
           "svtptt2" : "해외 2% 할인",
           "svtptt1" : "국내 1% 할인",
           "url" : "/pconts/html/card/apply/credit/1237253_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "Simple, 무실적, 전가맹점, 캐시백",
           "pvafeat" : 15000,
           "svtcd" : [
@@ -2143,6 +2217,7 @@
           "svtptt2" : "해외 2% 할인",
           "svtptt1" : "국내 1.5% 할인",
           "url" : "/pconts/html/card/apply/credit/1237252_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "",
           "pvafeat" : 47000,
           "svtcd" : [
@@ -2184,6 +2259,7 @@
           "svtptt2" : null,
           "svtptt1" : "최대 2만원 할인",
           "url" : "/pconts/html/card/apply/credit/2013724_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "교육, 교원, 구몬학습, 빨간펜, 학습지",
           "pvafeat" : 27000,
           "svtcd" : [
@@ -2208,6 +2284,7 @@
           "svtptt2" : "5% 할인",
           "svtptt1" : "10% 할인",
           "url" : "/pconts/html/card/apply/credit/1225543_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "K패스, 교통, 대중교통, 패스, K-패스, 케이패스, 간편결제",
           "pvafeat" : 7000,
           "svtcd" : [
@@ -2237,6 +2314,7 @@
           "svtptt2" : "월 최대 5만 포인트",
           "svtptt1" : "최대 1.5% 적립",
           "url" : "/pconts/html/card/apply/credit/2013774_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "",
           "pvafeat" : 20000,
           "svtcd" : [
@@ -2279,6 +2357,7 @@
           "svtptt2" : "3천 포인트 리필",
           "svtptt1" : "월 최대 7만 포인트",
           "url" : "/pconts/html/card/apply/credit/2013775_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "",
           "pvafeat" : 50000,
           "svtcd" : [
@@ -2321,6 +2400,7 @@
           "svtptt2" : "할인 서비스 제공",
           "svtptt1" : "할인 서비스 제공",
           "url" : "/pconts/html/card/apply/credit/2013453_2207.html",
+          "cardType" : 1,
           "sh_keyword" : "카뱅, 착붙, 카카오뱅크, 간편결제",
           "pvafeat" : 20000,
           "svtcd" : [
@@ -2345,6 +2425,7 @@
           "svtptt2" : "총 1% 적립",
           "svtptt1" : "0.3% 적립",
           "url" : "/pconts/html/card/apply/check/1187975_2206.html",
+          "cardType" : 2,
           "sh_keyword" : "주거래, 체크, 시너지, 포인트, 쇼핑, 백화점, 할인점, 해외, 이동통신, 버스, 지하철, 대중교통, 온라인, 소셜커머스, 도시가스",
           "pvafeat" : 0,
           "svtcd" : [

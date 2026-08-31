@@ -7,6 +7,7 @@ import java.util.Map;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joeylee.hot_deal_mcp.service.AnnualFeeBand;
+import com.joeylee.hot_deal_mcp.service.CardSortOrder;
 import com.joeylee.hot_deal_mcp.service.CreditCardGuideService;
 import com.joeylee.hot_deal_mcp.service.Industry;
 import com.joeylee.hot_deal_mcp.widget.PlayMcpWidgetFactory;
@@ -23,6 +24,8 @@ import org.springframework.context.annotation.Configuration;
 public class McpToolConfig {
 
     private static final String TOOL_NAME = "getCreditCardRecommendationsWithSelector";
+    private static final int CREDIT_CARD_TYPE = 1;
+    private static final int CHECK_CARD_TYPE = 2;
     private static final String TOOL_ERROR_MESSAGE = "### 카드 정보를 불러오지 못했습니다.\n\n"
             + "잠시 후 다시 시도해 주세요.";
 
@@ -79,7 +82,10 @@ public class McpToolConfig {
                     + "preferred spending category and annual-fee range. Use for credit card recommendations, "
                     + "comparisons, or category-specific benefits. Pass the closest supported category code as "
                     + "industry; omit it when unclear to show a selector widget. Set annualFee to 0~1만원대, "
-                    + "2~3만원대, or 제한없음; use 제한없음 when the user does not specify a range.",
+                    + "2~3만원대, or 제한없음; use 제한없음 when the user does not specify a range. Recommend "
+                    + "credit cards by default. Set cardType to 2 only when the user explicitly asks for a check "
+                    + "card; youth category requests automatically return check cards. Set sort to 출시일순 or "
+                    + "연회비순; default to 출시일순 when the user does not specify sorting.",
             annotations = @McpTool.McpAnnotations(
                     title = "소비 업종별 카드 안내 (선택 위젯)",
                     readOnlyHint = true,
@@ -101,28 +107,44 @@ public class McpToolConfig {
                     description = "사용자가 원하는 연회비 구간. '3만원대'는 2~3만원대로 변환합니다. 허용값: 0~1만원대, 2~3만원대, 제한없음. 언급이 없거나 상관없으면 제한없음",
                     required = false
             )
-            String annualFee
+            String annualFee,
+            @McpToolParam(
+                    description = "카드 종류. 1은 신용카드, 2는 체크카드입니다. 사용자가 체크카드를 명시적으로 요청한 경우에만 2를 사용하고, 그 외에는 생략하거나 1을 사용합니다. 청소년 업종(24)은 값과 관계없이 체크카드로 조회됩니다.",
+                    required = false
+            )
+            Integer cardType,
+            @McpToolParam(
+                    description = "정렬 기준. 허용값: 출시일순, 연회비순. 언급이 없으면 출시일순을 사용합니다. 출시일순은 최신 출시 카드부터, 연회비순은 낮은 연회비부터 정렬합니다.",
+                    required = false
+            )
+            String sort
     ) {
         try {
             logToolParameters(
                     TOOL_NAME,
                     "industry", industry,
-                    "annualFee", annualFee
+                    "annualFee", annualFee,
+                    "cardType", cardType,
+                    "sort", sort
             );
 
             return recommendCreditCards(
                     TOOL_NAME,
                     industry,
                     annualFee,
+                    cardType,
+                    sort,
                     widgetFactory.industrySelector(),
                     widgetFactory.annualFeeSelector()
             );
         } catch (RuntimeException exception) {
             log.error(
-                    "MCP 툴 처리 실패 - tool={}, industry={}, annualFee={}",
+                    "MCP 툴 처리 실패 - tool={}, industry={}, annualFee={}, cardType={}, sort={}",
                     TOOL_NAME,
                     industry,
                     annualFee,
+                    cardType,
+                    sort,
                     exception
             );
             // The MCP annotation adapter converts this message into isError=true text content.
@@ -135,6 +157,8 @@ public class McpToolConfig {
             String toolName,
             Integer industry,
             String annualFee,
+            Integer cardType,
+            String sort,
             PlayMcpWidgetResponse industryClarification,
             PlayMcpWidgetResponse annualFeeClarification
     ) {
@@ -155,11 +179,25 @@ public class McpToolConfig {
             return logAndReturn(toolName, annualFeeClarification);
         }
 
+        CardSortOrder parsedSortOrder = CardSortOrder.fromString(sort);
+
         List<CreditCardGuideService.CardGuide> guides =
-                creditCardGuideService.findGuides(parsedIndustry.getCode(), parsedAnnualFee);
+                creditCardGuideService.findGuides(
+                        parsedIndustry.getCode(),
+                        parsedAnnualFee,
+                        resolveCardType(parsedIndustry, cardType),
+                        parsedSortOrder
+                );
         PlayMcpWidgetResponse response =
                 widgetFactory.creditCardGuideList(guides, parsedIndustry, parsedAnnualFee);
         return logAndReturn(toolName, response);
+    }
+
+    private int resolveCardType(Industry industry, Integer requestedCardType) {
+        if (industry == Industry.YOUTH || Integer.valueOf(CHECK_CARD_TYPE).equals(requestedCardType)) {
+            return CHECK_CARD_TYPE;
+        }
+        return CREDIT_CARD_TYPE;
     }
 
     private static String industryClarificationText() {

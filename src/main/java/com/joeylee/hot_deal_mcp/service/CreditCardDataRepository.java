@@ -28,15 +28,20 @@ public class CreditCardDataRepository {
         this.cardsByExactTitle = indexByExactTitle(cards);
     }
 
-    public List<CardData> search(int industryCode, AnnualFeeBand annualFeeBand, int limit) {
+    public List<CardData> search(
+            int industryCode,
+            AnnualFeeBand annualFeeBand,
+            int cardType,
+            CardSortOrder sortOrder,
+            int limit
+    ) {
         String categoryCode = String.valueOf(industryCode);
+        Comparator<CardData> comparator = comparatorFor(sortOrder);
         return cards.stream()
                 .filter(card -> card.benefitCodes().contains(categoryCode))
                 .filter(card -> annualFeeBand.matches(card.annualFee()))
-                .sorted(Comparator
-                        .comparingInt((CardData card) -> card.benefitCodes().size())
-                        .thenComparingInt(CardData::annualFee)
-                        .thenComparing(CardData::title))
+                .filter(card -> card.cardType() == cardType)
+                .sorted(comparator)
                 .limit(limit)
                 .toList();
     }
@@ -97,7 +102,9 @@ public class CreditCardDataRepository {
 
         return new CardData(
                 title,
+                requiredText(source, "pageid"),
                 source.path("pvafeat").asInt(),
+                requiredCardType(source),
                 stringList(source.path("svtcd")),
                 List.copyOf(benefits),
                 text(source, "pagecont"),
@@ -115,12 +122,32 @@ public class CreditCardDataRepository {
         return List.copyOf(values);
     }
 
+    private Comparator<CardData> comparatorFor(CardSortOrder sortOrder) {
+        return switch (sortOrder) {
+            case RELEASE_DATE -> Comparator.comparing(CardData::pageId)
+                    .reversed()
+                    .thenComparingInt(CardData::annualFee)
+                    .thenComparing(CardData::title);
+            case ANNUAL_FEE -> Comparator.comparingInt(CardData::annualFee)
+                    .thenComparing(CardData::pageId, Comparator.reverseOrder())
+                    .thenComparing(CardData::title);
+        };
+    }
+
     private String requiredText(JsonNode source, String fieldName) {
         String value = text(source, fieldName);
         if (value.isBlank()) {
             throw new IllegalStateException("data.json 필수 필드가 비어 있습니다: " + fieldName);
         }
         return value;
+    }
+
+    private int requiredCardType(JsonNode source) {
+        JsonNode cardTypeNode = source.path("cardType");
+        if (!cardTypeNode.isInt() || (cardTypeNode.asInt() != 1 && cardTypeNode.asInt() != 2)) {
+            throw new IllegalStateException("data.json의 cardType은 1 또는 2여야 합니다.");
+        }
+        return cardTypeNode.asInt();
     }
 
     private String text(JsonNode source, String fieldName) {
@@ -136,7 +163,9 @@ public class CreditCardDataRepository {
 
     public record CardData(
             String title,
+            String pageId,
             int annualFee,
+            int cardType,
             List<String> benefitCodes,
             List<String> benefits,
             String summary,
