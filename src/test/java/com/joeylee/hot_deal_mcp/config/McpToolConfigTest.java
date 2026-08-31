@@ -110,7 +110,9 @@ class McpToolConfigTest {
         assertThat(moreCardsButton.path("label").asText()).isEqualTo("더 많은 카드 보기");
         assertThat(moreCardsButton.path("onClickAction").path("payload").path("target")
                 .path("url").asText()).isEqualTo(
-                "https://www.shinhancard.com/mob/MOBFM039N/MOBFM039C01.shc?crustMenuId=ms467"
+                "https://www.shinhancard.com/pconts/html/landing/2013846_2424.html?Tab=tab2"
+                        + "&utm_source=naver_mo&utm_medium=brandsearch_sa"
+                        + "&utm_campaign=main&utm_content=news"
         );
         assertThat(json.path("copy_text").asText()).contains("쇼핑", "0~1만원대");
         assertThat(json.path("copy_text").asText()).doesNotContain("체크");

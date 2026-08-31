@@ -9,7 +9,10 @@ import java.util.stream.Collectors;
 
 import com.joeylee.hot_deal_mcp.service.AnnualFeeBand;
 import com.joeylee.hot_deal_mcp.service.CreditCardGuideService;
+import com.joeylee.hot_deal_mcp.service.FinancialKnowledgeCategory;
+import com.joeylee.hot_deal_mcp.service.FinancialKnowledgeService;
 import com.joeylee.hot_deal_mcp.service.Industry;
+import com.joeylee.hot_deal_mcp.service.PopularCreditCardService;
 import org.springframework.stereotype.Component;
 
 /**
@@ -22,9 +25,8 @@ public class PlayMcpWidgetFactory {
     private static final int MAX_WIDGET_ITEMS = 100;
     private static final int MAX_COPY_TEXT_ITEMS = 10;
     private static final int SELECTOR_BUTTONS_PER_ROW = 4;
-    private static final String HOT_DEAL_RANK_URL = "https://www.algumon.com/deal/rank";
     private static final String MORE_CARDS_URL =
-            "https://www.shinhancard.com/mob/MOBFM039N/MOBFM039C01.shc?crustMenuId=ms467";
+            "https://www.shinhancard.com/pconts/html/landing/2013846_2424.html?Tab=tab2&utm_source=naver_mo&utm_medium=brandsearch_sa&utm_campaign=main&utm_content=news";
 
     public PlayMcpWidgetResponse clarificationNeeded(String message) {
         return new PlayMcpWidgetResponse(null, message);
@@ -121,6 +123,218 @@ public class PlayMcpWidgetFactory {
                 .append("\n\n_연회비와 혜택 조건은 카드 상세 페이지에서 최종 확인해 주세요._");
 
         return new PlayMcpWidgetResponse(widget, copyText.toString());
+    }
+
+    public PlayMcpWidgetResponse popularCreditCardList(
+            List<PopularCreditCardService.PopularCard> popularCards
+    ) {
+        List<Map<String, Object>> children = new java.util.ArrayList<>();
+        children.add(Map.of(
+                "type", "Text",
+                "value", "🔥 인기 TOP5",
+                "size", "lg",
+                "weight", "semibold"
+        ));
+        children.add(Map.of(
+                "type", "Caption",
+                "value", "신한카드에서 발급량이 가장 많은 카드예요"
+        ));
+        List<Map<String, Object>> cardRows = popularCards.stream()
+                .map(this::popularCreditCardRow)
+                .toList();
+        children.add(Map.of(
+                "type", "Col",
+                "gap", 4,
+                "padding", Map.of(
+                        "x", 2,
+                        "y", 3
+                ),
+                "children", cardRows
+        ));
+
+        Map<String, Object> rankButton = new LinkedHashMap<>();
+        rankButton.put("type", "Button");
+        rankButton.put("label", "신한카드 TOP10 차트 보러가기");
+        rankButton.put("variant", "outline");
+        rankButton.put("block", true);
+        rankButton.put("onClickAction", openUrlAction(MORE_CARDS_URL));
+        children.add(rankButton);
+
+        Map<String, Object> widget = new LinkedHashMap<>();
+        widget.put("type", "Card");
+        widget.put("children", children);
+
+        StringBuilder copyText = new StringBuilder("### 🔥 인기 TOP5\n\n")
+                .append("신한카드에서 발급량이 가장 많은 카드예요.\n\n");
+        popularCards.forEach(card -> copyText
+                .append(card.rank()).append(". **").append(card.name()).append("**")
+                .append(" · ").append(card.category()).append("\n"));
+        copyText.append("\n[신한카드 TOP10 차트 보러가기](")
+                .append(MORE_CARDS_URL)
+                .append(")");
+
+        return new PlayMcpWidgetResponse(widget, copyText.toString());
+    }
+
+    public PlayMcpWidgetResponse financialKnowledgeList(
+            FinancialKnowledgeCategory category,
+            List<FinancialKnowledgeService.Article> articles
+    ) {
+        List<Map<String, Object>> listItems = new java.util.ArrayList<>();
+        listItems.add(Map.of(
+                "type", "ListViewItem",
+                "children", List.of(Map.of(
+                        "type", "Col",
+                        "gap", 2,
+                        "align", "start",
+                        "padding", Map.of("x", 2, "y", 2),
+                        "children", List.of(
+                                Map.of(
+                                        "type", "Text",
+                                        "value", category.getWidgetTitle(),
+                                        "size", "lg",
+                                        "weight", "semibold",
+                                        "textAlign", "start"
+                                ),
+                                Map.of(
+                                        "type", "Caption",
+                                        "value", "금융생활지식 (" + category.getDisplayName() + ")",
+                                        "textAlign", "start"
+                                )
+                        )
+                ))
+        ));
+        for (int index = 0; index < articles.size(); index++) {
+            listItems.add(financialKnowledgeArticleRow(index + 1, articles.get(index)));
+        }
+
+        FinancialKnowledgeCategory nextCategory = category.next();
+        Map<String, Object> nextCategoryButton = new LinkedHashMap<>();
+        nextCategoryButton.put("type", "Button");
+        nextCategoryButton.put("label", "다른 카테고리 보기");
+        nextCategoryButton.put("variant", "outline");
+        nextCategoryButton.put("block", true);
+        nextCategoryButton.put(
+                "onClickAction",
+                sendUserMessageAction(nextCategory.getDisplayName() + " 금융생활지식 보여줘")
+        );
+        listItems.add(Map.of(
+                "type", "ListViewItem",
+                "children", List.of(nextCategoryButton)
+        ));
+
+        Map<String, Object> widget = new LinkedHashMap<>();
+        widget.put("type", "ListView");
+        widget.put("limit", 10);
+        widget.put("children", listItems);
+
+        StringBuilder copyText = new StringBuilder("### 금융생활지식 · ")
+                .append(category.getDisplayName())
+                .append("\n\n");
+        for (int index = 0; index < articles.size(); index++) {
+            FinancialKnowledgeService.Article article = articles.get(index);
+            copyText.append(index + 1)
+                    .append(". [")
+                    .append(article.title())
+                    .append("](")
+                    .append(article.url())
+                    .append(")\n");
+        }
+
+        return new PlayMcpWidgetResponse(widget, copyText.toString());
+    }
+
+    private Map<String, Object> financialKnowledgeArticleRow(
+            int index,
+            FinancialKnowledgeService.Article article
+    ) {
+        Map<String, Object> item = new LinkedHashMap<>();
+        item.put("type", "ListViewItem");
+        item.put("key", article.url());
+        item.put("align", "start");
+        item.put("gap", 3);
+        item.put("onClickAction", openUrlAction(article.url()));
+        item.put("children", List.of(
+                Map.of(
+                        "type", "Text",
+                        "value", String.format("%02d", index),
+                        "weight", "semibold",
+                        "width", 32,
+                        "textAlign", "start"
+                ),
+                Map.of(
+                        "type", "Col",
+                        "flex", 1,
+                        "align", "start",
+                        "padding", Map.of("x", 1, "y", 2),
+                        "children", List.of(Map.of(
+                                "type", "Text",
+                                "value", article.title(),
+                                "width", "100%",
+                                "textAlign", "start",
+                                "maxLines", 3
+                        ))
+                )
+        ));
+        return item;
+    }
+
+    private Map<String, Object> popularCreditCardRow(
+            PopularCreditCardService.PopularCard card
+    ) {
+        String rankLabel = switch (card.rank()) {
+            case 1 -> "🥇";
+            case 2 -> "🥈";
+            case 3 -> "🥉";
+            default -> String.valueOf(card.rank());
+        };
+
+        Map<String, Object> cardImage = Map.of(
+                "type", "Image",
+                "src", card.imageUrl(),
+                "alt", card.name() + " 카드 이미지",
+                "width", 112,
+                "height", 72,
+                "fit", "contain",
+                "radius", "sm"
+        );
+        Map<String, Object> cardDetails = Map.of(
+                "type", "Col",
+                "gap", 2,
+                "flex", "auto",
+                "children", List.of(
+                        Map.of(
+                                "type", "Text",
+                                "value", card.name(),
+                                "size", "sm",
+                                "weight", "semibold",
+                                "maxLines", 2
+                        ),
+                        Map.of(
+                                "type", "Row",
+                                "gap", 2,
+                                "children", List.of(benefitCategoryBadge(card.category()))
+                        )
+                )
+        );
+
+        return Map.of(
+                "type", "Row",
+                "key", card.name(),
+                "gap", 4,
+                "align", "center",
+                "padding", Map.of("y", 2),
+                "children", List.of(
+                        Map.of(
+                                "type", "Text",
+                                "value", rankLabel,
+                                "size", "lg",
+                                "weight", "semibold"
+                        ),
+                        cardImage,
+                        cardDetails
+                )
+        );
     }
 
     public PlayMcpWidgetResponse creditCardDetail(CreditCardGuideService.CardDetail detail) {
