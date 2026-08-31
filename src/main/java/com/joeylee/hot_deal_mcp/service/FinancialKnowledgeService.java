@@ -51,11 +51,11 @@ public class FinancialKnowledgeService {
             List.of(
                     new Article(
                             "[쏠깃한 카드 연구소] 지구와 나를 위한 더 나은 Plan 신한카드 ECO Plan",
-                            "https://www.shinhancardblog.com/1432"
+                            "https://www.shinhancardblog.com/1424"
                     ),
                     new Article(
                             "[쏠깃한 카드 연구소] 조건 없이 한층 더 강해진 혜택, 신한카드 Simple Plan+",
-                            "https://www.shinhancardblog.com/1424"
+                            "https://www.shinhancardblog.com/1421"
                     ),
                     new Article(
                             "[쏠깃한 카드 연구소] 복잡한 건 딱 질색일 땐? 신한카드 Simple Plan",
