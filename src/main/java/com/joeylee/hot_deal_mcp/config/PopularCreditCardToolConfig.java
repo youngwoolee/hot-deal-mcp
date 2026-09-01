@@ -3,7 +3,7 @@ package com.joeylee.hot_deal_mcp.config;
 import java.util.List;
 
 import com.joeylee.hot_deal_mcp.service.PopularCreditCardService;
-import com.joeylee.hot_deal_mcp.widget.PlayMcpWidgetFactory;
+import com.joeylee.hot_deal_mcp.widget.PopularCreditCardWidgetFactory;
 import com.joeylee.hot_deal_mcp.widget.PlayMcpWidgetResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ public class PopularCreditCardToolConfig {
             + "잠시 후 다시 시도해 주세요.";
 
     private final PopularCreditCardService popularCreditCardService;
-    private final PlayMcpWidgetFactory widgetFactory;
+    private final PopularCreditCardWidgetFactory widgetFactory;
 
     @McpTool(
             name = TOOL_NAME,

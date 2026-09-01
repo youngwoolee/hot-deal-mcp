@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joeylee.hot_deal_mcp.service.FinancialKnowledgeService;
-import com.joeylee.hot_deal_mcp.widget.PlayMcpWidgetFactory;
+import com.joeylee.hot_deal_mcp.widget.FinancialKnowledgeWidgetFactory;
 import com.joeylee.hot_deal_mcp.widget.PlayMcpWidgetResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ class FinancialKnowledgeToolConfigTest {
     void setUp() {
         config = new FinancialKnowledgeToolConfig(
                 new FinancialKnowledgeService(),
-                new PlayMcpWidgetFactory()
+                new FinancialKnowledgeWidgetFactory()
         );
     }
 
@@ -108,7 +108,7 @@ class FinancialKnowledgeToolConfigTest {
         when(failingService.findArticles(any())).thenThrow(new IllegalStateException("internal details"));
         FinancialKnowledgeToolConfig failingConfig = new FinancialKnowledgeToolConfig(
                 failingService,
-                new PlayMcpWidgetFactory()
+                new FinancialKnowledgeWidgetFactory()
         );
 
         assertThatThrownBy(() -> failingConfig.getFinancialLifeKnowledgeArticles("트렌드"))

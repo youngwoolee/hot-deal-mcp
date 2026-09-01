@@ -13,29 +13,29 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joeylee.hot_deal_mcp.service.CreditCardDataRepository;
 import com.joeylee.hot_deal_mcp.service.CreditCardGuideService;
-import com.joeylee.hot_deal_mcp.widget.PlayMcpWidgetFactory;
+import com.joeylee.hot_deal_mcp.widget.CreditCardRecommendationWidgetFactory;
 import com.joeylee.hot_deal_mcp.widget.PlayMcpWidgetResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springaicommunity.mcp.annotation.McpTool;
 
-class McpToolConfigTest {
+class CreditCardRecommendationToolConfigTest {
 
-    private McpToolConfig mcpToolConfig;
+    private CreditCardRecommendationToolConfig mcpToolConfig;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
-        mcpToolConfig = new McpToolConfig(
+        mcpToolConfig = new CreditCardRecommendationToolConfig(
                 new CreditCardGuideService(new CreditCardDataRepository(objectMapper)),
-                new PlayMcpWidgetFactory(),
+                new CreditCardRecommendationWidgetFactory(),
                 objectMapper
         );
     }
 
     @Test
     void toolMetadataFollowsKakaoRequirements() throws NoSuchMethodException {
-        Method method = McpToolConfig.class.getDeclaredMethod(
+        Method method = CreditCardRecommendationToolConfig.class.getDeclaredMethod(
                 "getCreditCardRecommendationsWithSelector",
                 Integer.class,
                 String.class,
@@ -214,9 +214,9 @@ class McpToolConfigTest {
         CreditCardGuideService failingService = mock(CreditCardGuideService.class);
         when(failingService.findGuides(anyInt(), any(), anyInt(), any()))
                 .thenThrow(new IllegalStateException("internal database details"));
-        McpToolConfig failingConfig = new McpToolConfig(
+        CreditCardRecommendationToolConfig failingConfig = new CreditCardRecommendationToolConfig(
                 failingService,
-                new PlayMcpWidgetFactory(),
+                new CreditCardRecommendationWidgetFactory(),
                 objectMapper
         );
 

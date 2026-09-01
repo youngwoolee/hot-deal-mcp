@@ -8,7 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joeylee.hot_deal_mcp.service.CreditCardGuideService;
 import com.joeylee.hot_deal_mcp.service.CreditCardName;
-import com.joeylee.hot_deal_mcp.widget.PlayMcpWidgetFactory;
+import com.joeylee.hot_deal_mcp.widget.CreditCardDetailWidgetFactory;
 import com.joeylee.hot_deal_mcp.widget.PlayMcpWidgetResponse;
 import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.spec.McpSchema;
@@ -31,7 +31,7 @@ public class CreditCardDetailToolConfig {
             + "잠시 후 다시 시도해 주세요.";
 
     private final CreditCardGuideService creditCardGuideService;
-    private final PlayMcpWidgetFactory widgetFactory;
+    private final CreditCardDetailWidgetFactory widgetFactory;
     private final ObjectMapper objectMapper;
 
     @Bean

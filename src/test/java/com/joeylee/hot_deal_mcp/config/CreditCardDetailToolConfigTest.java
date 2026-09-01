@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joeylee.hot_deal_mcp.service.CreditCardDataRepository;
 import com.joeylee.hot_deal_mcp.service.CreditCardGuideService;
 import com.joeylee.hot_deal_mcp.service.CreditCardName;
-import com.joeylee.hot_deal_mcp.widget.PlayMcpWidgetFactory;
+import com.joeylee.hot_deal_mcp.widget.CreditCardDetailWidgetFactory;
 import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +25,7 @@ class CreditCardDetailToolConfigTest {
     void setUp() {
         config = new CreditCardDetailToolConfig(
                 new CreditCardGuideService(new CreditCardDataRepository(objectMapper)),
-                new PlayMcpWidgetFactory(),
+                new CreditCardDetailWidgetFactory(),
                 objectMapper
         );
     }

@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joeylee.hot_deal_mcp.service.CreditCardDataRepository;
 import com.joeylee.hot_deal_mcp.service.PopularCreditCardService;
-import com.joeylee.hot_deal_mcp.widget.PlayMcpWidgetFactory;
+import com.joeylee.hot_deal_mcp.widget.PopularCreditCardWidgetFactory;
 import com.joeylee.hot_deal_mcp.widget.PlayMcpWidgetResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ class PopularCreditCardToolConfigTest {
     void setUp() {
         config = new PopularCreditCardToolConfig(
                 new PopularCreditCardService(new CreditCardDataRepository(objectMapper)),
-                new PlayMcpWidgetFactory()
+                new PopularCreditCardWidgetFactory()
         );
     }
 
@@ -88,7 +88,7 @@ class PopularCreditCardToolConfigTest {
         when(failingService.findPopularCards()).thenThrow(new IllegalStateException("internal details"));
         PopularCreditCardToolConfig failingConfig = new PopularCreditCardToolConfig(
                 failingService,
-                new PlayMcpWidgetFactory()
+                new PopularCreditCardWidgetFactory()
         );
 
         assertThatThrownBy(failingConfig::getPopularCreditCards)

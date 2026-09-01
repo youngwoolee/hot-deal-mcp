@@ -2,7 +2,7 @@ package com.joeylee.hot_deal_mcp.config;
 
 import com.joeylee.hot_deal_mcp.service.FinancialKnowledgeCategory;
 import com.joeylee.hot_deal_mcp.service.FinancialKnowledgeService;
-import com.joeylee.hot_deal_mcp.widget.PlayMcpWidgetFactory;
+import com.joeylee.hot_deal_mcp.widget.FinancialKnowledgeWidgetFactory;
 import com.joeylee.hot_deal_mcp.widget.PlayMcpWidgetResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ public class FinancialKnowledgeToolConfig {
             + "잠시 후 다시 시도해 주세요.";
 
     private final FinancialKnowledgeService financialKnowledgeService;
-    private final PlayMcpWidgetFactory widgetFactory;
+    private final FinancialKnowledgeWidgetFactory widgetFactory;
 
     @McpTool(
             name = TOOL_NAME,
