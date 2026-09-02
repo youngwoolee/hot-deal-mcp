@@ -58,6 +58,14 @@ public enum Industry {
         };
     }
 
+    public String getSelectorDisplayName() {
+        return switch (this) {
+            case PUBLIC_TRANSPORT -> "교통";
+            case AIRPORT -> "공항라운지";
+            default -> displayName;
+        };
+    }
+
     public boolean isSelectorVisible() {
         return SELECTOR_VISIBLE_CODES.contains(code);
     }
@@ -71,7 +79,7 @@ public enum Industry {
     public static List<String> selectorDisplayNames() {
         return Arrays.stream(values())
                 .filter(Industry::isSelectorVisible)
-                .map(Industry::getWidgetDisplayName)
+                .map(Industry::getSelectorDisplayName)
                 .toList();
     }
 

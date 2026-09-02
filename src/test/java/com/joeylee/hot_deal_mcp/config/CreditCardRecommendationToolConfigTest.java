@@ -161,6 +161,10 @@ class CreditCardRecommendationToolConfigTest {
                 .isEqualTo("대형마트");
         assertThat(firstButtonRow.path("children").get(3).path("label").asText())
                 .isEqualTo("편의점");
+        assertThat(json.path("widget").path("children").get(2)
+                .path("children").get(3).path("label").asText()).isEqualTo("교통");
+        assertThat(json.path("widget").path("children").get(3)
+                .path("children").get(3).path("label").asText()).isEqualTo("항공");
         assertThat(json.path("widget").path("children")).hasSize(5);
         JsonNode lastButtonRow = json.path("widget").path("children").get(4);
         assertThat(lastButtonRow.path("children").get(0).path("label").asText())
