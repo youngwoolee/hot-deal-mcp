@@ -118,8 +118,14 @@ class FinancialKnowledgeToolConfigTest {
     }
 
     private void assertArticle(JsonNode row, String title, String url) {
-        JsonNode titleText = row.path("children").get(1).path("children").get(0);
+        JsonNode rankText = row.path("children").get(0);
+        JsonNode titleContainer = row.path("children").get(1);
+        JsonNode titleText = titleContainer.path("children").get(0);
         assertThat(row.path("type").asText()).isEqualTo("ListViewItem");
+        assertThat(row.path("align").asText()).isEqualTo("start");
+        assertThat(rankText.path("type").asText()).isEqualTo("Text");
+        assertThat(titleContainer.path("align").asText()).isEqualTo("start");
+        assertThat(titleContainer.path("padding").has("y")).isFalse();
         assertThat(titleText.path("value").asText()).isEqualTo(title);
         assertThat(titleText.path("textAlign").asText()).isEqualTo("start");
         assertThat(titleText.path("maxLines").asInt()).isEqualTo(3);

@@ -22,13 +22,13 @@ public class PopularCreditCardWidgetFactory {
         List<Map<String, Object>> children = new ArrayList<>();
         children.add(Map.of(
                 "type", "Text",
-                "value", "🔥 인기 TOP5",
+                "value", "추천 TOP5",
                 "size", "lg",
                 "weight", "semibold"
         ));
         children.add(Map.of(
                 "type", "Caption",
-                "value", "신한카드에서 발급량이 가장 많은 카드예요"
+                "value", "신한카드에서 추천해드리는 카드예요!"
         ));
         children.add(Map.of(
                 "type", "Col",
@@ -51,8 +51,8 @@ public class PopularCreditCardWidgetFactory {
         widget.put("type", "Card");
         widget.put("children", children);
 
-        StringBuilder copyText = new StringBuilder("### 🔥 인기 TOP5\n\n")
-                .append("신한카드에서 발급량이 가장 많은 카드예요.\n\n");
+        StringBuilder copyText = new StringBuilder("### 추천 TOP5\n\n")
+                .append("신한카드에서 추천해드리는 카드예요!\n\n");
         popularCards.forEach(card -> copyText
                 .append(card.rank()).append(". **").append(card.name()).append("**")
                 .append(" · ").append(card.category()).append("\n"));
@@ -72,6 +72,7 @@ public class PopularCreditCardWidgetFactory {
             case 3 -> "🥉";
             default -> String.valueOf(card.rank());
         };
+        String rankSize = card.rank() <= 3 ? "xl" : "lg";
         Map<String, Object> cardImage = cardImage(card.name(), card.imageUrl());
         Map<String, Object> cardDetails = Map.of(
                 "type", "Col",
@@ -102,8 +103,10 @@ public class PopularCreditCardWidgetFactory {
                         Map.of(
                                 "type", "Text",
                                 "value", rankLabel,
-                                "size", "lg",
-                                "weight", "semibold"
+                                "size", rankSize,
+                                "weight", "semibold",
+                                "width", 32,
+                                "textAlign", "center"
                         ),
                         cardImage,
                         cardDetails

@@ -50,7 +50,9 @@ class PopularCreditCardToolConfigTest {
         JsonNode children = json.path("widget").path("children");
 
         assertThat(children).hasSize(4);
-        assertThat(children.get(0).path("value").asText()).contains("인기 TOP5");
+        assertThat(children.get(0).path("value").asText()).isEqualTo("추천 TOP5");
+        assertThat(children.get(1).path("value").asText())
+                .isEqualTo("신한카드에서 추천해드리는 카드예요!");
         JsonNode cardRows = children.get(2).path("children");
         assertThat(cardRows).hasSize(5);
         assertThat(cardName(cardRows.get(0))).isEqualTo("신한카드 Deep Oil");
@@ -63,7 +65,15 @@ class PopularCreditCardToolConfigTest {
         assertThat(cardRows.get(2).path("children").get(0).path("value").asText()).isEqualTo("🥉");
         assertThat(cardRows.get(3).path("children").get(0).path("value").asText()).isEqualTo("4");
         assertThat(cardRows.get(4).path("children").get(0).path("value").asText()).isEqualTo("5");
+        assertThat(cardRows.get(0).path("children").get(0).path("size").asText()).isEqualTo("xl");
+        assertThat(cardRows.get(1).path("children").get(0).path("size").asText()).isEqualTo("xl");
+        assertThat(cardRows.get(2).path("children").get(0).path("size").asText()).isEqualTo("xl");
+        assertThat(cardRows.get(3).path("children").get(0).path("size").asText()).isEqualTo("lg");
+        assertThat(cardRows.get(4).path("children").get(0).path("size").asText()).isEqualTo("lg");
         for (JsonNode cardRow : cardRows) {
+            JsonNode rank = cardRow.path("children").get(0);
+            assertThat(rank.path("width").asInt()).isEqualTo(32);
+            assertThat(rank.path("textAlign").asText()).isEqualTo("center");
             assertThat(cardRow.path("children").get(1).path("type").asText()).isEqualTo("Image");
             assertThat(cardRow.path("children").get(1).path("src").asText()).startsWith("https://");
             assertThat(cardRow.path("children").get(2).path("children").get(1)
@@ -74,6 +84,8 @@ class PopularCreditCardToolConfigTest {
         assertThat(children.get(3).path("type").asText()).isEqualTo("Button");
         assertThat(children.get(3).path("label").asText()).isEqualTo("신한카드 TOP10 차트 보러가기");
         assertThat(response.copyText()).contains(
+                "### 추천 TOP5",
+                "신한카드에서 추천해드리는 카드예요!",
                 "1. **신한카드 Deep Oil**",
                 "2. **신한카드 Mr.Life**",
                 "3. **신한카드 Air One**",

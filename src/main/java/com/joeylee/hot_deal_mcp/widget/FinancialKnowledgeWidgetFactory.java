@@ -96,7 +96,7 @@ public class FinancialKnowledgeWidgetFactory {
                         "type", "Col",
                         "flex", 1,
                         "align", "start",
-                        "padding", Map.of("x", 1, "y", 2),
+                        "padding", Map.of("x", 1),
                         "children", List.of(Map.of(
                                 "type", "Text",
                                 "value", article.title(),
