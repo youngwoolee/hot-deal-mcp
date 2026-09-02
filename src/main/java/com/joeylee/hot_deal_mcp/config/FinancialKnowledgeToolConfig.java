@@ -24,7 +24,8 @@ public class FinancialKnowledgeToolConfig {
 
     @McpTool(
             name = TOOL_NAME,
-            description = "Returns Shinhan financial-life articles grouped by intent. Use category 트렌드 for "
+            description = "Returns Shinhan Card(신한카드) financial-life articles grouped by intent. "
+                    + "Use category 트렌드 for "
                     + "consumer trends, spending reports, consumption data, or general financial content; 금융 "
                     + "for practical money knowledge, financial issues, or Shinhan guidance; 카드연구소 for "
                     + "smart card usage, card tips, saving tips, or useful card information.",

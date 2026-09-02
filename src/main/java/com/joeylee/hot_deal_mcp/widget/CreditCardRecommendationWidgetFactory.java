@@ -1,6 +1,6 @@
 package com.joeylee.hot_deal_mcp.widget;
 
-import static com.joeylee.hot_deal_mcp.widget.CreditCardWidgetLinks.CARD_RANKING_URL;
+import static com.joeylee.hot_deal_mcp.widget.CreditCardWidgetLinks.CARD_SEARCH_URL;
 import static com.joeylee.hot_deal_mcp.widget.CreditCardWidgetComponents.badge;
 import static com.joeylee.hot_deal_mcp.widget.CreditCardWidgetComponents.cardImage;
 import static com.joeylee.hot_deal_mcp.widget.PlayMcpWidgetActions.openUrl;
@@ -64,7 +64,7 @@ public class CreditCardRecommendationWidgetFactory {
         moreCardsButton.put("variant", "outline");
         moreCardsButton.put("pill", true);
         moreCardsButton.put("block", true);
-        moreCardsButton.put("onClickAction", openUrl(CARD_RANKING_URL));
+        moreCardsButton.put("onClickAction", openUrl(CARD_SEARCH_URL));
 
         Map<String, Object> cardList = new LinkedHashMap<>();
         cardList.put("type", "Col");
@@ -83,7 +83,7 @@ public class CreditCardRecommendationWidgetFactory {
         guides.forEach(guide -> copyText
                 .append("- ").append(guide.name())
                 .append(" (`").append(guide.annualFee()).append("`)\n"));
-        copyText.append("\n[더 많은 카드 보기](").append(CARD_RANKING_URL).append(")")
+        copyText.append("\n[더 많은 카드 보기](").append(CARD_SEARCH_URL).append(")")
                 .append("\n\n_연회비와 혜택 조건은 카드 상세 페이지에서 최종 확인해 주세요._");
 
         return new PlayMcpWidgetResponse(widget, copyText.toString());

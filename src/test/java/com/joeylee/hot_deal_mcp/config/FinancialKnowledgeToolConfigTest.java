@@ -41,7 +41,12 @@ class FinancialKnowledgeToolConfigTest {
         assertThat(tool.name()).isEqualTo("getFinancialLifeKnowledgeArticles");
         assertThat(tool.description())
                 .hasSizeLessThanOrEqualTo(1_024)
-                .contains("consumer trends", "practical money knowledge", "smart card usage");
+                .contains(
+                        "Shinhan Card(신한카드)",
+                        "consumer trends",
+                        "practical money knowledge",
+                        "smart card usage"
+                );
         assertThat(tool.annotations().readOnlyHint()).isTrue();
         assertThat(tool.annotations().destructiveHint()).isFalse();
         assertThat(tool.annotations().idempotentHint()).isTrue();
